@@ -1,6 +1,6 @@
 target/
 build/
-*.class
 dist/*
 nbproject/*
 *.log
+*.class
