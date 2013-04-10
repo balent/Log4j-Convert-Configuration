@@ -1,5 +1,7 @@
 package cz.muni.pb138.log4j;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -8,72 +10,98 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.log4j.Logger;
 
 /**
  * Main deals with command line arguments
  * 
  */
 public class Main {
+
+    private static Logger log = Logger.getLogger(Main.class);
+
     public static void main(String[] args) {
 
         // dealing with command line arguments
-        Option xmlFileOption = OptionBuilder.withArgName("file").hasArg()
-                .withDescription("XML File to convert to properties")
-                .create("j");
-        Option propertyFileOption = OptionBuilder.withArgName("file").hasArg()
-                .withDescription("Property File to convert to XML")
-                .create("l");        
+        Option inputFileOption = OptionBuilder.withArgName("file").hasArg()
+                .withDescription("Input file to convert")
+                .create("i");
         Option outputFileOption = OptionBuilder.withArgName("file").hasArg()
                 .withDescription("Output file")
                 .create("o");
         Option helpOption = new Option("h", "Display this help");
-        
+
         Options options = new Options();
-        
-        options.addOption(xmlFileOption);
-        options.addOption(propertyFileOption);
+
+        options.addOption(inputFileOption);
         options.addOption(outputFileOption);
         options.addOption(helpOption);
-        
 
         CommandLineParser parser = new PosixParser();
-        CommandLine cmd;
+        CommandLine cmd = null;
         try {
             cmd = parser.parse(options, args);
-            
-            if (cmd.hasOption("h")) {
-                displayHelpAndExit(options, 0);
-            }
-            
-            if (cmd.hasOption("j") && cmd.hasOption("l")) {
-                System.err.println("Both arguments are specified, select XML or Property file");
-                System.err.println();
-                displayHelpAndExit(options, 1);
-            }
-            
-            if (!(cmd.hasOption("j") || cmd.hasOption("l"))) {
-                System.err.println("Please select XML or Property file");
-                System.err.println();
-                displayHelpAndExit(options, 1);
-            }
-
         } catch (ParseException exp) {
-            System.err.println(exp.getMessage());
-            System.err.println();
+            log.error(exp.getMessage());
             displayHelpAndExit(options, 1);
         }
 
-        System.out.println("Hello World!");
+        if (cmd.hasOption("h")) {
+            displayHelpAndExit(options, 0);
+        }
+
+        if (!cmd.hasOption("i")) {
+            log.error("Please select input file");
+            displayHelpAndExit(options, 1);
+        }
         
-        /* here will be something like
-         * 
-         * String outputFile = ...
-         * Log4jConverter log4jConverter = new Log4jConverter(inputFile, outputFile);
-         * log4jConverter.convert();
-         * 
-         */
+        String inputFileName = cmd.getOptionValue("i");
+        String outputFileName = null;
+
+        Converter converter;
+
+        if (cmd.hasOption("o")) {
+            outputFileName = cmd.getOptionValue("o");
+        }
+
+        if (inputFileName.contains(".xml")) {
+            if (outputFileName == null) {
+                outputFileName = inputFileName.replace(".xml", ".properties");
+            }
+            
+            converter = new XmlToPropsConverter();
+        } else {
+            if (outputFileName == null) {
+                outputFileName = inputFileName.replace(".properties", ".xml");
+            }
+            
+            converter = new PropsToXmlConverter();
+        }
+        
+        File inputFile = new File(inputFileName);
+        File outputFile = new File(outputFileName);
+        
+        if (!inputFile.exists()) {
+            log.error("Input file doesn't exist");
+            System.exit(2);
+        }
+        
+        if (outputFile.exists()) {
+            // ask confirmation
+            // do you want to rewrite file?
+        }
+
+        try {
+            converter.convert(inputFile, outputFile);
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            log.debug(ex.getMessage(), ex);
+            System.exit(2);
+        }
+        
+        System.out.println("File successfully converted");
     }
-    
+
     private static void displayHelpAndExit(Options options, int exitValue) {
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("log4j-convert", options);
