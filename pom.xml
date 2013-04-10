@@ -49,6 +49,7 @@
                                     <mainClass>cz.muni.pb138.log4j.Main</mainClass>
                                 </transformer>
                             </transformers>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
