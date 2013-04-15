@@ -19,7 +19,7 @@ public class DtdValidator {
         this.xmlFile = xmlFile;
     }
     
-    public boolean validate() {
+    public Document validate() {
         // resolver to load dtd from log4j resources
         EntityResolver resolver = new EntityResolver() {
             public InputSource resolveEntity(String publicId, String systemId) {
@@ -37,14 +37,15 @@ public class DtdValidator {
         SAXReader saxReader = new SAXReader();
         saxReader.setEntityResolver(resolver);
         saxReader.setValidation(true);
+        
         try {
             Document doc = saxReader.read(xmlFile);
+            log.debug("Succesfully validated against DTD");
+            return doc;
         } catch (DocumentException dex) {
             log.error(dex.getMessage());
             log.debug(dex.getMessage(), dex);
-            return false;
         }
-        log.debug("Succesfully validated against DTD");
-        return true;
+        return null;
     }
 }
