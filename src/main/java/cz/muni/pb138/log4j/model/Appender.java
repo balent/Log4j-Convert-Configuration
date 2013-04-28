@@ -33,8 +33,10 @@ public class Appender {
             className = value;
         } else {
             String newKey = key.substring(name.length() + 1); // removing appenderName from key
-            if (newKey.startsWith("option")) {
-                params.put(newKey, value);
+            if (newKey.startsWith("option")) {              // those values are Bean-type based, they are  
+                AppUtils.crash("TO DO (See commentary)");   // NOT named option1, option2 etc., see Log4j the CM
+                params.put(newKey, value);                  // detto nezabudnut ignorecase
+                // params: layout, file, append, buffersize, target... it also depends on appender name :((
             } else {
                 AppUtils.crash("Not supported yet: log4j." + key + "=" + value);
             }

@@ -62,7 +62,7 @@ public class Configuration {
 
     public void addConfig(String key, String value) {
         if (key.startsWith("logger")) {
-            String newKey = key.substring(7);
+            String newKey = key.substring(6);
             String loggerName = newKey.split("\\.")[0];
             Logger logger = loggers.get(loggerName);
             if (logger == null) {
@@ -78,7 +78,7 @@ public class Configuration {
             }
             rootLogger.addConfig(value);
         } else if (key.startsWith("appender")) {
-            String newKey = key.substring(9);
+            String newKey = key.substring(8);
             String appenderName = newKey.split("\\.")[0];
             Appender appender = appenders.get(appenderName);
             if (appender == null) {
@@ -88,7 +88,9 @@ public class Configuration {
             }
             appender.addConfig(newKey, value);
         }
-    }
+    } /* to add: log4j.threshold=level
+     * 
+     */
     
     public void verify() {
         // verify object structure
