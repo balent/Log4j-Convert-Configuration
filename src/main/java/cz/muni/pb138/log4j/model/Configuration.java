@@ -93,7 +93,26 @@ public class Configuration {
      */
     
     public void verify() {
-        // verify object structure
+        // verify loggers - TODO
+        
+        // verify appenders + layouts
+        for(Appender appender : appenders.values()) {
+            // verify layouts
+            if(appender.getLayoutClassName() != null) {     // there is a layout present
+                for(Layout layout : Layout.values()) {
+                    if(appender.getLayoutClassName().equalsIgnoreCase(layout.toString())) {
+                        for (String layoutParam : appender.getLayoutParams().keySet()) {
+                            if(!layoutParam.equalsIgnoreCase(layout.getParam1()) 
+                                    && !layoutParam.equalsIgnoreCase(layout.getParam2())) {
+                                AppUtils.crash("You have entered wrong layout parameter.");
+                            }
+                        }
+                    } 
+                }
+            } else {}       // verify other appender structure (mainly appender parameters)
+        }
+        
+        // verify other object structure - TODO
     }
     
     public Document toXML() {
