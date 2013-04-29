@@ -35,7 +35,7 @@ public class PropsToXmlConverter implements Converter {
             String value = properties.getProperty(propertyKey).toLowerCase();
 
             if (key.startsWith("log4j")) {
-                String newKey = key.substring(5); // remove initial "log4j"
+                String newKey = key.substring(6); // remove initial "log4j."
                 configuration.addConfig(newKey, value);
             } else {
                 AppUtils.crash("every property name must start with 'log4j': " + key);

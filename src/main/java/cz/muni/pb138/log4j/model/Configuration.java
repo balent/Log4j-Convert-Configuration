@@ -62,7 +62,7 @@ public class Configuration {
 
     public void addConfig(String key, String value) {
         if (key.startsWith("logger")) {
-            String newKey = key.substring(6);
+            String newKey = key.substring(7);
             String loggerName = newKey.split("\\.")[0];
             Logger logger = loggers.get(loggerName);
             if (logger == null) {
@@ -78,7 +78,7 @@ public class Configuration {
             }
             rootLogger.addConfig(value);
         } else if (key.startsWith("appender")) {
-            String newKey = key.substring(8);
+            String newKey = key.substring(9);
             String appenderName = newKey.split("\\.")[0];
             Appender appender = appenders.get(appenderName);
             if (appender == null) {
@@ -103,13 +103,13 @@ public class Configuration {
         rootElement.addNamespace("log4j", "http://jakarta.apache.org/log4j/");
         
         for (Appender appender: appenders.values()) {
-            appender.addElement(rootElement);
+            appender.addThisToElement(rootElement);
         }
         for (Logger logger: loggers.values()) {
-            logger.addElement(rootElement);
+            logger.addThisToElement(rootElement);
         }
         if (rootLogger != null) {
-            rootLogger.addElement(rootElement);
+            rootLogger.addThisToElement(rootElement);
         }
         return document;
     }

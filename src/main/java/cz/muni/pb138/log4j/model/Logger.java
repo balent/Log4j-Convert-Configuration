@@ -57,7 +57,7 @@ public class Logger {
         }
     }
     
-    public Element addElement(Element rootElement) {
+    public Element addThisToElement(Element rootElement) {
         Element loggerElement = null;
         if (isRootLogger) {
             loggerElement = rootElement.addElement("root");
