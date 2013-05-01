@@ -3,7 +3,6 @@ package cz.muni.pb138.log4j.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dom4j.Document;
 import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
@@ -12,6 +11,8 @@ public class Appender {
     private String name;
     private String className;
     private String layoutClassName = null;
+    private boolean hasLayoutAlready = false;
+    private String threshold;
     private Map<String, String> params = new HashMap<String, String>();
     private Map<String, String> layoutParams = new HashMap<String, String>();
 
@@ -39,8 +40,16 @@ public class Appender {
         this.layoutClassName = layoutClassName;
     }
 
+    public String getThreshold() {
+        return threshold;
+    }
+
     public Map<String, String> getLayoutParams() {
         return layoutParams;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
     }
 
     public void addConfig(String key, String value) {
@@ -48,18 +57,22 @@ public class Appender {
             className = value;
         } else {
             String newKey = key.substring(name.length() + 1); // removing appenderName. from key
-            
-            if(newKey.startsWith("layout")) {               // each appender has max. one "private" layout
+            if(newKey.startsWith("layout")) {               
+                // each appender has max. one "private" layout
                 String layout = newKey.substring(6);      // removing "layout" part without "."
                 if(layout.contains(".")) {
                     layoutParams.put(layout.substring(1), value);
                 } else {
+                    if(hasLayoutAlready) {
+                        AppUtils.crash("This appender already has a layout defined.");
+                    }
                     layoutClassName = value;
+                    hasLayoutAlready = true;
                 }              
             } else {
                 params.put(newKey, value);
                 // those values are Bean-type based, they are
-                // params: layout, file, append, buffersize, target... it also
+                // params: file, append, buffersize, target... it also
                 // depends on appender class :((
             }
         }

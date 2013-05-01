@@ -11,6 +11,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import cz.muni.pb138.log4j.model.Configuration;
+import java.util.Locale;
 
 public class PropsToXmlConverter implements Converter {
 
@@ -31,11 +32,11 @@ public class PropsToXmlConverter implements Converter {
         Configuration configuration = new Configuration();
 
         for (String propertyKey : properties.stringPropertyNames()) {
-            String key = propertyKey.toLowerCase();
-            String value = properties.getProperty(propertyKey).toLowerCase();
+            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
+            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
             // TODO: value moze obsahovat aj premennu vo ${} vyraze, tato premenna je definovana sposobom 
             // nazovPremennej = hodnota.
-            if (key.startsWith("log4j")) {
+            if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
                 String newKey = key.substring(6); // remove initial "log4j."
                 configuration.addConfig(newKey, value);
             } else {
