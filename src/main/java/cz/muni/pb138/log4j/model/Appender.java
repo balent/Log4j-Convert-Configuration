@@ -99,4 +99,12 @@ public class Appender {
         }
         return rootElement;
     }
+    
+    public void setUpFromElement(Element element){
+        name = element.attributeValue("name");
+        className = element.attributeValue("class");
+        
+        // to do
+        
+    }
 }

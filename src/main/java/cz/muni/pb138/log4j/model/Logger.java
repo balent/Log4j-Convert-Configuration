@@ -6,14 +6,18 @@ import java.util.List;
 import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class Logger {
 
     private String name;
     private List<String> appenderNames = new ArrayList<String>();
+    private Map<String, String> params = new HashMap<String, String>();
     private String additivity;
     private String level;
+    private LoggerLevel loggerLevel;
     private String customClass = "";
     private boolean isRootLogger = false;
 
@@ -100,5 +104,41 @@ public class Logger {
             appenderElement.addAttribute("ref", appenderName);
         }
         return rootElement;
+    }
+    
+    public void setUpFromElement(Element element){
+        
+        if(element.getQualifiedName().equalsIgnoreCase("root")){
+            isRootLogger = true;
+        }
+        else
+        {
+            if(element.attributeValue("class") != null){
+                customClass = element.attributeValue("class");
+            }
+            name = element.attributeValue("name");
+            additivity =  element.attributeValue("additivity");
+        }
+        
+        // TODO, zistit zoznam moznych parametrov pre logger
+        for(Element e : (List<Element>) element.elements("param")){
+            params.put(e.attributeValue("name"), e.attributeValue("value"));
+        }
+        
+        if(element.element("level") != null){
+            try{
+                LoggerLevelEnum.valueOf(element.element("level").attributeValue("value").toUpperCase(Locale.ENGLISH));
+                loggerLevel = new LoggerLevel();
+                loggerLevel.setUpFromElement(element.element("level"));
+            }catch(Exception e)
+            {
+                AppUtils.crash
+                (element.element("level").attributeValue("value") + " isn't defined in LoggerLevelEnum", e);
+            }
+        }
+        
+        for(Element e : (List<Element>) element.elements("appender-ref")){
+            appenderNames.add(e.attributeValue("ref"));
+        }
     }
 }

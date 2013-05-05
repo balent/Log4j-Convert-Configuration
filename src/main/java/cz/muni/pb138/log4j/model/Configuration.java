@@ -9,9 +9,11 @@ import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
 import java.util.Iterator;
+import java.util.Properties;
 
 public class Configuration {
 
+    private Map<String, Renderer> renderers = new HashMap<String, Renderer>();
     private Map<String, Logger> loggers = new HashMap<String, Logger>();
     private Map<String, Appender> appenders = new HashMap<String, Appender>();
     private Logger rootLogger;
@@ -21,12 +23,28 @@ public class Configuration {
     private String wideThreshold;
     private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Configuration.class);
 
+    public Map<String, Renderer> getRenderers() {
+        return renderers;
+    }
+    
+    public void addRenderer(Renderer renderer){
+        
+    }
+
     public Map<String, Appender> getAppenders() {
         return appenders;
+    }
+    
+    public void addAppender(Appender appender){
+        
     }
 
     public Map<String, Logger> getLoggers() {
         return loggers;
+    }
+    
+    public void addLogger(Logger logger){
+        
     }
 
     public Logger getRootLogger() {
@@ -37,7 +55,7 @@ public class Configuration {
         return threshold;
     }
 
-    public boolean isDebug() {
+    public Boolean isDebug() {
         return debug;
     }
 
@@ -62,7 +80,7 @@ public class Configuration {
             AppUtils.crash("You have specified wrong configuration threshold", ex);
         }
     }
-
+    
     public void addConfig(String key, String value) {
         if (key.startsWith("logger")) {
             String loggerName = key.substring(7);   // logger names often contain "."
@@ -187,5 +205,9 @@ public class Configuration {
             rootLogger.addThisToElement(rootElement);
         }
         return document;
+    }
+    
+    public Properties toProperties(){
+        return null;
     }
 }
