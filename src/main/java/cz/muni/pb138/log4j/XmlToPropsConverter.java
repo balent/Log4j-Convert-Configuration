@@ -28,11 +28,12 @@ public class XmlToPropsConverter implements Converter {
         if (document == null) {
             log.error("Provided file is not valid log4j xml configuration.");
             System.exit(2);
-        }
+        }//TODO CRASH
         
         Element rootElement = document.getRootElement();
         String thresholdAtt = rootElement.attributeValue("threshold");
         String debugAtt = rootElement.attributeValue("debug");
+        String resetAtt = rootElement.attributeValue("reset");
         
         configuration = new Configuration();
             
@@ -48,6 +49,13 @@ public class XmlToPropsConverter implements Converter {
             if(! debugAtt.equalsIgnoreCase("null")){
                 debugAtt = debugAtt.toLowerCase(Locale.ENGLISH);
                 configuration.setDebug(debugAtt);
+            }
+        }
+        
+        if(resetAtt != null){
+            if(! resetAtt.equalsIgnoreCase("null")){
+                resetAtt = resetAtt.toLowerCase(Locale.ENGLISH);
+                configuration.setReset(resetAtt);
             }
         }
         

@@ -73,6 +73,17 @@ public class Configuration {
         return reset;
     }
 
+    public void setReset(String reset) {
+         if ("true".equalsIgnoreCase(reset)) {
+            this.reset = true;
+        } else if ("false".equalsIgnoreCase(reset)) {
+            this.reset = false;
+        } else {
+            AppUtils.crash("You have specified wrong configuration reset parameter");
+        }
+    }
+
+    
     public void setThreshold(String threshold) {
         try {
             this.threshold = Threshold.valueOf(threshold);
