@@ -18,6 +18,7 @@
 
    <logger name="TESTLOGGER">
 	<level value="warn"/>
+	<appender-ref ref="fileAppender"/>
    </logger>
 
    <root>

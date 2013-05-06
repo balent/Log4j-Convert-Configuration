@@ -28,7 +28,11 @@ public class Configuration {
     }
     
     public void addRenderer(Renderer renderer){
-        
+        if(renderers.get(renderer.getRenderedClass()) == null){
+            renderers.put(renderer.getRenderedClass(), renderer);
+        }else{
+            AppUtils.crash("Two renderers for the class: " + renderer.getRenderedClass());
+        }
     }
 
     public Map<String, Appender> getAppenders() {
@@ -36,7 +40,11 @@ public class Configuration {
     }
     
     public void addAppender(Appender appender){
-        
+        if(appenders.get(appender.getName()) == null){
+            appenders.put(appender.getName(), appender);
+        }else{
+            AppUtils.crash("Two appenders with the same name: " + appender.getName());
+        }
     }
 
     public Map<String, Logger> getLoggers() {
@@ -44,7 +52,11 @@ public class Configuration {
     }
     
     public void addLogger(Logger logger){
-        
+        if(loggers.get(logger.getName()) == null){
+            loggers.put(logger.getName(), logger);
+        }else{
+            AppUtils.crash("Two loggers with the same name: " + logger.getName());
+        }
     }
 
     public Logger getRootLogger() {

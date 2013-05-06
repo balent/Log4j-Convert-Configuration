@@ -6,6 +6,9 @@ import java.util.Map;
 import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class Appender {
     private String name;
@@ -15,6 +18,9 @@ public class Appender {
     private String threshold;
     private Map<String, String> params = new HashMap<String, String>();
     private Map<String, String> layoutParams = new HashMap<String, String>();
+    private ErrorHandler errorHandler;
+    private Map<String, AppenderFilter> filters  = new HashMap<String, AppenderFilter>();
+    private List<String> appenderRefs = new ArrayList<String>();
 
     public String getName() {
         return name;
@@ -48,8 +54,50 @@ public class Appender {
         return layoutParams;
     }
 
+    public void addLayoutParam(String value, String key){
+        if(params.get(key) == null){
+             checkLayoutParamSuported(key);
+             params.put(key, value);
+        }else{
+            AppUtils.crash("Appender: '" + name + "' with two same layout params: " + key);
+        }
+    }
+    
     public Map<String, String> getParams() {
         return params;
+    }
+    
+    public void addParam(String key, String value){
+        if(params.get(key) == null){
+           checkAppenderParamSuported(key);
+           params.put(key, value);
+        }else{
+            AppUtils.crash("Appender: '" + name + "' with two same params: " + key);
+        }
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    public Map<String, AppenderFilter> getFilters() {
+        return filters;
+    }
+
+    public List<String> getAppenderRefs() {
+        return appenderRefs;
+    }
+    
+    public void addAppenderRef(String ref){
+        if(!appenderRefs.contains(ref)){
+            appenderRefs.add(ref);
+        }else{
+            AppUtils.crash("Appender: '" + name + "' with two same appender-ref: " + ref);
+        }
     }
 
     public void addConfig(String key, String value) {
@@ -102,9 +150,69 @@ public class Appender {
     
     public void setUpFromElement(Element element){
         name = element.attributeValue("name");
-        className = element.attributeValue("class");
+        className = checkClassSuported(element.attributeValue("class"));
         
-        // to do
+        if(element.element("errorHandler") != null){
+            errorHandler = new ErrorHandler();
+            errorHandler.setUpFromElement(element.element("errorHandler"));
+        }
         
+        for(Element e : (List<Element>) element.elements("param")){
+            addParam(e.attributeValue("name"), e.attributeValue("value"));
+        }
+        
+        if(element.element("layout") != null) {
+            layoutClassName = element.element("layout").attributeValue("class");
+            for(Element e : (List<Element>) element.elements("param")){
+                addLayoutParam(e.attributeValue("name"), e.attributeValue("value"));
+            }
+        }
+        
+        for(Element e : (List<Element>) element.elements("filter")){
+            if(filters.get(e.attributeValue("class")) == null){
+                AppenderFilter filter = new AppenderFilter();
+                filter.setUpFromElement(e);
+                filters.put(filter.getClassName(), filter);
+            }else{
+                AppUtils.crash("Two filters of the same class: '" +e.attributeValue("class") + "' in appender: " + name);
+            }
+        }
+        
+        for(Element e : (List<Element>) element.elements("appender-ref")){
+            addAppenderRef(e.attributeValue("ref"));
+        }
+    }
+    
+    private String checkClassSuported(String className){
+        if(!className.startsWith("org.apache.log4j.")){
+            AppUtils.crash("Unsuported appender class package for appender: '" + name + "'");
+        }
+        String[] classNameArr = className.split("\\.");
+        
+        if(classNameArr.length != 4){
+            AppUtils.crash("Unsuported appender class for appender: '" + name + "'");
+        }
+        
+        try{
+            AppenderParams params = AppenderParams.valueOf(classNameArr[3].toLowerCase(Locale.ENGLISH));
+        }catch(Exception e){
+            AppUtils.crash("Unsuported appender class: '" + classNameArr[3] + "' for appender: " + name, e);
+        }
+        
+        return classNameArr[3];
+    }
+    
+    private void checkAppenderParamSuported(String param){
+        AppenderParams appender = AppenderParams.valueOf(className.toLowerCase(Locale.FRENCH));
+        
+        for(String par : appender.getParams()){
+            if(param.equalsIgnoreCase(par)) return;
+        }
+        
+        AppUtils.crash("Unsuported appender param: '" + param + "' for appender class: " + className);
+    }
+    
+    private void checkLayoutParamSuported(String param){
+        // TO DO?
     }
 }

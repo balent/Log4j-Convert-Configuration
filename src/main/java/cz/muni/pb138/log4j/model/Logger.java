@@ -122,7 +122,11 @@ public class Logger {
         
         // TODO, zistit zoznam moznych parametrov pre logger
         for(Element e : (List<Element>) element.elements("param")){
-            params.put(e.attributeValue("name"), e.attributeValue("value"));
+            if(params.get(e.attributeValue("name")) == null){
+                params.put(e.attributeValue("name"), e.attributeValue("value"));
+            }else{
+                AppUtils.crash("Logger: '" + name + "' with two same params: " + e.attributeValue("name"));
+            }
         }
         
         if(element.element("level") != null){
@@ -138,7 +142,11 @@ public class Logger {
         }
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
-            appenderNames.add(e.attributeValue("ref"));
+            if(! appenderNames.contains(e.attributeValue("ref"))){
+                appenderNames.add(e.attributeValue("ref"));
+            }else{
+                AppUtils.crash("Logger: '" + name + "' with two same appenders: " + e.attributeValue("ref"));
+            }
         }
     }
 }
