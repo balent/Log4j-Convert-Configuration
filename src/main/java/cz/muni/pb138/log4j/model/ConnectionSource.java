@@ -12,11 +12,13 @@ import org.dom4j.Element;
 
 /**
  *
- * @author xmarko2
+ * @author jozef
  */
-public class LoggerFactory {
+public class ConnectionSource {
     private String className;
     private Map<String, String> params = new HashMap<String, String>();
+    private DataSource dataSource;
+    
     
     public void addParam(String key, String value){
         if(params.get(key) == null){
@@ -29,9 +31,14 @@ public class LoggerFactory {
     public void setUpFromElement(Element element){
         className = element.attributeValue("class");
         
+        if(element.element("dataSource") != null){
+            dataSource = new DataSource();
+            dataSource.setUpFromElement(element.element("dataSource"));
+        }
+        
         for(Element e : (List<Element>) element.elements("param")){
             addParam(e.attributeValue("name"), e.attributeValue("value"));
         }
         
-    }    
+    }
 }
