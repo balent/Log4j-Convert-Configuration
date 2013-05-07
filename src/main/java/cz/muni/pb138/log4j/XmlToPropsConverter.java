@@ -108,9 +108,8 @@ public class XmlToPropsConverter implements Converter {
         }
                 
         //writing out
-        PrintStream out = new PrintStream(new FileOutputStream(outputFile));
         
-        Properties prop = configuration.toProperties();
+        List<String> prop = configuration.toProperties();
         AppUtils.store(prop, outputFile);
     }
 }

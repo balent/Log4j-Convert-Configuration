@@ -8,7 +8,9 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 public class Configuration {
@@ -257,12 +259,22 @@ public class Configuration {
         return document;
     }
     
-    public Properties toProperties(){        
-        Properties prop = new Properties();
+    public List<String> toProperties(){        
+        List<String> prop = new ArrayList<String>();
         
+        //root element at first
         for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
-            logger.toProperty(prop); //todo
+            if(logger.isRootLogger()){
+                logger.toProperty(prop);
+                break;
+            }
         }
+        for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
+            if(!logger.isRootLogger()){
+                logger.toProperty(prop);
+            }
+        }
+        
         return prop;
     }
 }

@@ -159,7 +159,7 @@ public class Logger {
     }
     
     
-    public Properties toProperty(Properties prop) {
+    public List<String> toProperty(List<String> prop) {
         String levelToProp = loggerLevel.getLevel();
         String apenders = AppUtils.join(appenderNames, ", ");
         String value;
@@ -181,13 +181,13 @@ public class Logger {
         }
         
         if(isRootLogger()) {            
-            prop.setProperty(AppUtils.prefix("rootLogger"), value);
+            prop.add(AppUtils.prefix("rootLogger") + " = " + value);
         }
         else {
-            prop.setProperty(AppUtils.prefix("logger." + name), value);
-            prop.setProperty(AppUtils.prefix("additivity." + name),additivity);
+            prop.add(AppUtils.prefix("logger." + name) + " = " + value);
+            prop.add(AppUtils.prefix("additivity." + name) + " = " + additivity);
         }
-        
+        prop.add("");
         return prop;
     }
 }
