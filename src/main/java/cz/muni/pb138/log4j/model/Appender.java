@@ -68,8 +68,11 @@ public class Appender {
     }
     
     public void addParam(String key, String value){
+        if(checkClassSuported())
+        {
+            if(!checkAppenderParamSuported(key)) AppUtils.crash("Unsuported param: " + key + " in appender: " + name);
+        }
         if(params.get(key) == null){
-           //checkAppenderParamSuported(key);
            params.put(key, value);
         }else{
             AppUtils.crash("Appender: '" + name + "' with two same params: " + key);
@@ -159,7 +162,6 @@ public class Appender {
     public void setUpFromElement(Element element){
         name = element.attributeValue("name");
         className = element.attributeValue("class");
-        //className = checkClassSuported(element.attributeValue("class"));
         
         if(element.element("errorHandler") != null){
             errorHandler = new ErrorHandler();
@@ -189,33 +191,39 @@ public class Appender {
         }
     }
     
-    private String checkClassSuported(String className){
+    private boolean checkClassSuported(){
         if(!className.startsWith("org.apache.log4j.")){
-            AppUtils.crash("Unsuported appender class package for appender: '" + name + "'");
+            //AppUtils.crash("Unsuported appender class package for appender: '" + name + "'");
+            return false;
         }
         String[] classNameArr = className.split("\\.");
         
         if(classNameArr.length != 4){
-            AppUtils.crash("Unsuported appender class for appender: '" + name + "'");
+            //AppUtils.crash("Unsuported appender class for appender: '" + name + "'");
+            return false;
         }
         
         try{
             AppenderParams params = AppenderParams.valueOf(classNameArr[3].toLowerCase(Locale.ENGLISH));
         }catch(Exception e){
-            AppUtils.crash("Unsuported appender class: '" + classNameArr[3] + "' for appender: " + name, e);
+            //AppUtils.crash("Unsuported appender class: '" + classNameArr[3] + "' for appender: " + name, e);
+            return false;
         }
         
-        return classNameArr[3];
+        //return classNameArr[3];
+        return true;
     }
     
-    private void checkAppenderParamSuported(String param){
+    private boolean checkAppenderParamSuported(String param){
+        
         AppenderParams appender = AppenderParams.valueOf(className.toLowerCase(Locale.FRENCH));
         
         for(String par : appender.getParams()){
-            if(param.equalsIgnoreCase(par)) return;
+            if(param.equalsIgnoreCase(par)) return true;
         }
         
-        AppUtils.crash("Unsuported appender param: '" + param + "' for appender class: " + className);
+        //AppUtils.crash("Unsuported appender param: '" + param + "' for appender class: " + className);
+        return false;
     }
     
     private void checkLayoutParamSuported(String param){
