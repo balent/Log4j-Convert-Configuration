@@ -58,7 +58,7 @@ public class LoggerLevel {
         }
         
         for(Element e : (List<Element>) element.elements("param")){
-            params.put(e.attributeValue("name"), e.attributeValue("value"));
+            addParam(e.attributeValue("name"), e.attributeValue("value"));
         }
     }
     

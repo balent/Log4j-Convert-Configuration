@@ -69,7 +69,7 @@ public class Appender {
     
     public void addParam(String key, String value){
         if(params.get(key) == null){
-           checkAppenderParamSuported(key);
+           //checkAppenderParamSuported(key);
            params.put(key, value);
         }else{
             AppUtils.crash("Appender: '" + name + "' with two same params: " + key);
@@ -88,6 +88,14 @@ public class Appender {
         return filters;
     }
 
+    public void addFilter(AppenderFilter filter){
+        if(filters.get(filter.getClassName()) == null){
+            filters.put(filter.getClassName(), filter);
+        }else{
+            AppUtils.crash("Two filters of the same class: '" +filter.getClassName() + "' in appender: " + name);
+        }
+    }
+    
     public List<String> getAppenderRefs() {
         return appenderRefs;
     }
@@ -150,7 +158,8 @@ public class Appender {
     
     public void setUpFromElement(Element element){
         name = element.attributeValue("name");
-        className = checkClassSuported(element.attributeValue("class"));
+        className = element.attributeValue("class");
+        //className = checkClassSuported(element.attributeValue("class"));
         
         if(element.element("errorHandler") != null){
             errorHandler = new ErrorHandler();
@@ -169,13 +178,10 @@ public class Appender {
         }
         
         for(Element e : (List<Element>) element.elements("filter")){
-            if(filters.get(e.attributeValue("class")) == null){
+            
                 AppenderFilter filter = new AppenderFilter();
                 filter.setUpFromElement(e);
-                filters.put(filter.getClassName(), filter);
-            }else{
-                AppUtils.crash("Two filters of the same class: '" +e.attributeValue("class") + "' in appender: " + name);
-            }
+                addFilter(filter);
         }
         
         for(Element e : (List<Element>) element.elements("appender-ref")){

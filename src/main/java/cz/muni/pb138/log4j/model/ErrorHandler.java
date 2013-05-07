@@ -4,6 +4,7 @@
  */
 package cz.muni.pb138.log4j.model;
 
+import cz.muni.pb138.log4j.AppUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,15 +35,24 @@ public class ErrorHandler {
     }
 
     public void addParam(String key, String value) {
-        
+        if(params.get(key) == null){
+           checkErrHandParamSuported(key);
+           params.put(key, value);
+        }else{
+            AppUtils.crash("ErrorHandler: '" + className + "' with two same params: " + key);
+        }
     }
 
     public List<String> getLoggers() {
         return loggers;
     }
 
-    public void addLoggers(String logger) {
-        
+    public void addLogger(String logger) {
+        if(!loggers.contains(logger)){
+            loggers.add(logger);
+        }else{
+            AppUtils.crash("Two same logger-ref:'" + logger + "' in ErrorHanfler: " + className);
+        }
     }
 
     public String getRoot() {
@@ -62,6 +72,27 @@ public class ErrorHandler {
     }
     
     public void setUpFromElement(Element element){
+        className = element.attributeValue("class");
+        
+        for(Element e : (List<Element>) element.elements("param")){
+            addParam(e.attributeValue("name"), e.attributeValue("value"));
+        }
+        
+        if(element.element("root-ref") != null){
+                root = element.element("root-ref").attributeValue("ref");
+        }
+        
+        for(Element e : (List<Element>) element.elements("logger-ref")){
+            addLogger(e.attributeValue("ref"));
+        }
+        
+        if(element.element("appender-ref") != null){
+                appender = element.element("appender-ref").attributeValue("ref");
+        }
+        
+    }
+    
+    private void checkErrHandParamSuported(String name){
         
     }
 }

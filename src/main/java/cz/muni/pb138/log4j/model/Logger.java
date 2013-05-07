@@ -33,6 +33,14 @@ public class Logger {
         return appenderNames;
     }
 
+    public void addAppenderName(String appenderName){
+        if(! appenderNames.contains(appenderName)){
+            appenderNames.add(appenderName);
+        }else{
+            AppUtils.crash("Logger: '" + name + "' with two same appenders: " + appenderName);
+        }
+    }
+    
     public String getAdditivity() {
         return additivity;
     }
@@ -51,6 +59,15 @@ public class Logger {
 
     public void setRootLogger(boolean isRootLogger) {
         this.isRootLogger = isRootLogger;
+    }
+    
+    public void addParam(String key, String value){
+        if(params.get(key) == null){
+            checkLoggerParamSuported(key);
+            params.put(key, value);
+        }else{
+            AppUtils.crash("Logger: '" + name + "' with two same params: " + key);
+        }
     }
 
     public void addConfig(String value) {
@@ -122,31 +139,30 @@ public class Logger {
         
         // TODO, zistit zoznam moznych parametrov pre logger
         for(Element e : (List<Element>) element.elements("param")){
-            if(params.get(e.attributeValue("name")) == null){
-                params.put(e.attributeValue("name"), e.attributeValue("value"));
-            }else{
-                AppUtils.crash("Logger: '" + name + "' with two same params: " + e.attributeValue("name"));
-            }
+            addParam(e.attributeValue("name"), e.attributeValue("value"));
         }
         
         if(element.element("level") != null){
-            try{
-                LoggerLevelEnum.valueOf(element.element("level").attributeValue("value").toUpperCase(Locale.ENGLISH));
-                loggerLevel = new LoggerLevel();
-                loggerLevel.setUpFromElement(element.element("level"));
-            }catch(Exception e)
-            {
-                AppUtils.crash
-                (element.element("level").attributeValue("value") + " isn't defined in LoggerLevelEnum", e);
-            }
+            checkLevel(element.element("level").attributeValue("value"));
+            loggerLevel = new LoggerLevel();
+            loggerLevel.setUpFromElement(element.element("level"));
         }
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
-            if(! appenderNames.contains(e.attributeValue("ref"))){
-                appenderNames.add(e.attributeValue("ref"));
-            }else{
-                AppUtils.crash("Logger: '" + name + "' with two same appenders: " + e.attributeValue("ref"));
-            }
+            addAppenderName(e.attributeValue("ref"));
         }
+    }
+    
+    private void checkLevel(String level){
+        try{
+            LoggerLevelEnum.valueOf(level.toUpperCase(Locale.ENGLISH));
+        }catch(Exception e)
+        {
+           AppUtils.crash(level + " isn't defined in LoggerLevelEnum", e);
+        }
+    }
+    
+    private void checkLoggerParamSuported(String param){
+        // to do
     }
 }
