@@ -5,9 +5,12 @@ import cz.muni.pb138.log4j.model.Configuration;
 import cz.muni.pb138.log4j.model.Renderer;
 import cz.muni.pb138.log4j.model.Threshold;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Attribute;
@@ -26,9 +29,8 @@ public class XmlToPropsConverter implements Converter {
         Document document = dtdValidator.validate();
         
         if (document == null) {
-            log.error("Provided file is not valid log4j xml configuration.");
-            System.exit(2);
-        }//TODO CRASH
+            AppUtils.crash("Provided file is not valid log4j xml configuration.");
+        }
         
         Element rootElement = document.getRootElement();
         String thresholdAtt = rootElement.attributeValue("threshold");
@@ -80,5 +82,10 @@ public class XmlToPropsConverter implements Converter {
         cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
         rootLogger.setUpFromElement(rootElement.element("root"));
         configuration.addLogger(rootLogger);
+        
+        OutputStream out = new FileOutputStream(outputFile);
+        
+        Properties prop = configuration.toProperties();
+        prop.store(out, null);
     }
 }

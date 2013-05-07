@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" threshold="warn">
+  <appender name="appendername" class="fully.qualified.name.of.appender.class">
+    <param name="option1" value="value1"/>
+    <param name="optionn" value="valuen"/>
+    <layout class="org.apache.log4j.htmllayout">
+      <param name="title" value="html layout example"/>
+      <param name="locationinfo" value="true"/>
+    </layout>
+  </appender>
+  <appender name="consoleappender">
+    <param name="immediateflush" value="true"/>
+    <param name="encoding" value="utf-8"/>
+  </appender>
+  <appender name="dailyrollingfileappender">
+    <param name="datepattern" value="blahblahblah"/>
+  </appender>
+  <logger name="logger2" additivity="false">
+    <level value="mylevel" class="mysite.com.mypackage.mylevel"/>
+    <appender-ref ref="appendername"/>
+  </logger>
+  <logger name="logger3" additivity="false">
+    <level/>
+  </logger>
+  <logger name="logger1">
+    <level value="info"/>
+    <appender-ref ref="appendername"/>
+  </logger>
+  <logger name="my.logger.with.fullstops">
+    <level value="warn"/>
+    <appender-ref ref="appendername"/>
+  </logger>
+  <root>
+    <level value="debug"/>
+    <appender-ref ref="appendername"/>
+  </root>
+</log4j:configuration>

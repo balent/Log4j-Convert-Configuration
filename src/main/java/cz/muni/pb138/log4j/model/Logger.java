@@ -9,14 +9,15 @@ import cz.muni.pb138.log4j.AppUtils;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 public class Logger {
 
     private String name;
     private List<String> appenderNames = new ArrayList<String>();
     private Map<String, String> params = new HashMap<String, String>();
-    private String additivity;
-    private String level;
+    private String additivity; // TODO:  it should by only boolean 
+    private String level; //deprecated
     private LoggerLevel loggerLevel;
     private String customClass = "";
     private boolean isRootLogger = false;
@@ -164,5 +165,29 @@ public class Logger {
     
     private void checkLoggerParamSuported(String param){
         // to do
+    }
+    
+    
+    public Properties toProperty(Properties prop) {
+        String levelToProp = loggerLevel.getLevel().toString();
+        String apenders = AppUtils.join(appenderNames, ", ");
+        String value;
+        
+        if(!apenders.isEmpty()) {
+            value = levelToProp + ", " + apenders;
+        }
+        else {
+            value = levelToProp;
+        }
+        
+        if(isRootLogger()) {            
+            prop.setProperty(AppUtils.prefix("rootLogger"), value);
+        }
+        else {
+            prop.setProperty(AppUtils.prefix("logger." + name), value);
+            prop.setProperty(AppUtils.prefix("additivity." + name),additivity);
+        }
+        
+        return prop;
     }
 }

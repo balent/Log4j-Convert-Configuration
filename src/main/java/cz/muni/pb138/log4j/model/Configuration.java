@@ -230,7 +230,12 @@ public class Configuration {
         return document;
     }
     
-    public Properties toProperties(){
-        return null;
+    public Properties toProperties(){        
+        Properties prop = new Properties();
+        
+        for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
+            logger.toProperty(prop); //todo
+        }
+        return prop;
     }
 }
