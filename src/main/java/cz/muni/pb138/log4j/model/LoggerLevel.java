@@ -18,15 +18,15 @@ import org.dom4j.Element;
  */
 public class LoggerLevel {
     
-    private LoggerLevelEnum level;
+    private String level;
     private Map<String, String> params = new HashMap<String, String>();
     private String levelClass = "";
 
-    public LoggerLevelEnum getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(LoggerLevelEnum level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
@@ -51,14 +51,44 @@ public class LoggerLevel {
     }
     
     public void setUpFromElement(Element element){
-        level = LoggerLevelEnum.valueOf(element.attributeValue("value").toUpperCase(Locale.ENGLISH));
+        String value = element.attributeValue("value");
+        String classAtt = element.attributeValue("class");
         
-        if(element.attributeValue("class") != null){
-            levelClass = element.attributeValue("class");
+        if(checkStandardLevel(value))
+        {
+            level = value;
+            if(classAtt != null){
+                levelClass = classAtt;
+            }
         }
+        else{
+            String[] ownLevelarr = value.split("#");
+            if(ownLevelarr.length == 2 && classAtt == null){
+                level = ownLevelarr[0];
+                levelClass = ownLevelarr[1];                
+            }else if(ownLevelarr.length == 1){
+                level = ownLevelarr[0];
+                if(classAtt != null){
+                    levelClass = classAtt;
+                }
+            }else{
+                AppUtils.crash("Invalid setting for level attributes value: " + value + " class: " + classAtt);
+            }
+        }
+        
         
         for(Element e : (List<Element>) element.elements("param")){
             addParam(e.attributeValue("name"), e.attributeValue("value"));
+        }
+    }
+    
+    private boolean checkStandardLevel(String level){
+        try{
+            LoggerLevelEnum.valueOf(level.toUpperCase(Locale.ENGLISH));
+            return true;
+        }catch(Exception e)
+        {
+           return false;
         }
     }
     

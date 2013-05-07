@@ -144,22 +144,13 @@ public class Logger {
         }
         
         if(element.element("level") != null){
-            checkLevel(element.element("level").attributeValue("value"));
+            
             loggerLevel = new LoggerLevel();
             loggerLevel.setUpFromElement(element.element("level"));
         }
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
             addAppenderName(e.attributeValue("ref"));
-        }
-    }
-    
-    private void checkLevel(String level){
-        try{
-            LoggerLevelEnum.valueOf(level.toUpperCase(Locale.ENGLISH));
-        }catch(Exception e)
-        {
-           AppUtils.crash(level + " isn't defined in LoggerLevelEnum", e);
         }
     }
     

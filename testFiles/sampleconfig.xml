@@ -59,6 +59,11 @@
 <appender-ref ref="AppendRef"/>
 </logger>
 
+<logger class="NiceClass" name="NiceName" additivity="true">
+	<level class="LevelClass" value="nestandart"/>
+</logger>
+
+
 <!-- categoryFactory or loggerFactory, not required -->
 
 
