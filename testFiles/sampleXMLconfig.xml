@@ -21,6 +21,16 @@
 	<appender-ref ref="fileAppender"/>
    </logger>
 
+   <logger name="TESTLOGGER2">
+      <level value="warn#testclass"/>
+      <appender-ref ref="fileAppender"/>
+   </logger>
+
+   <logger name="TESTLOGGER3">
+      <level value="warn" class="12312testclass.com "/>
+      <appender-ref ref="fileAppender"/>
+   </logger>
+
    <root>
       <level value="INFO"/>
       <appender-ref ref="consoleAppender"/>

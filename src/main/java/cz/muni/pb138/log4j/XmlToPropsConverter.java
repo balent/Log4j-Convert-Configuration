@@ -10,6 +10,7 @@ import cz.muni.pb138.log4j.model.ThrowableRenderer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -107,9 +108,9 @@ public class XmlToPropsConverter implements Converter {
         }
                 
         //writing out
-        OutputStream out = new FileOutputStream(outputFile);
+        PrintStream out = new PrintStream(new FileOutputStream(outputFile));
         
         Properties prop = configuration.toProperties();
-        prop.store(out, null);
+        prop.list(out);
     }
 }

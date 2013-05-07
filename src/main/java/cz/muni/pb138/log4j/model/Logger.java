@@ -160,9 +160,18 @@ public class Logger {
     
     
     public Properties toProperty(Properties prop) {
-        String levelToProp = loggerLevel.getLevel().toString();
+        String levelToProp = loggerLevel.getLevel();
         String apenders = AppUtils.join(appenderNames, ", ");
         String value;
+        
+        if(!loggerLevel.getLevelClass().isEmpty()) {
+            
+            StringBuilder levelToPropBld = new StringBuilder(levelToProp);
+            levelToPropBld.append("#");
+            levelToPropBld.append(loggerLevel.getLevelClass());
+            
+            levelToProp = levelToPropBld.toString();
+        }
         
         if(!apenders.isEmpty()) {
             value = levelToProp + ", " + apenders;
