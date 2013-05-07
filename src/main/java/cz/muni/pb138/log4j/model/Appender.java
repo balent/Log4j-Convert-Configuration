@@ -68,10 +68,9 @@ public class Appender {
     }
     
     public void addParam(String key, String value){
-        if(checkClassSuported())
-        {
-            if(!checkAppenderParamSuported(key)) AppUtils.crash("Unsuported param: " + key + " in appender: " + name);
-        }
+        
+        if(!checkParamSuported(key)) AppUtils.crash("Unsuported param: " + key + " in appender: " + name);
+        
         if(params.get(key) == null){
            params.put(key, value);
         }else{
@@ -191,41 +190,34 @@ public class Appender {
         }
     }
     
-    private boolean checkClassSuported(){
+    private boolean checkParamSuported(String param){
         if(!className.startsWith("org.apache.log4j.")){
             //AppUtils.crash("Unsuported appender class package for appender: '" + name + "'");
-            return false;
+            return true;
         }
         String[] classNameArr = className.split("\\.");
         
         if(classNameArr.length != 4){
             //AppUtils.crash("Unsuported appender class for appender: '" + name + "'");
-            return false;
+            return true;
         }
         
         try{
             AppenderParams params = AppenderParams.valueOf(classNameArr[3].toLowerCase(Locale.ENGLISH));
+            
+            for(String par : params.getParams()){
+                if(param.equalsIgnoreCase(par)) return true;
+            }
         }catch(Exception e){
             //AppUtils.crash("Unsuported appender class: '" + classNameArr[3] + "' for appender: " + name, e);
-            return false;
+            return true;
         }
         
         //return classNameArr[3];
-        return true;
-    }
-    
-    private boolean checkAppenderParamSuported(String param){
-        
-        AppenderParams appender = AppenderParams.valueOf(className.toLowerCase(Locale.FRENCH));
-        
-        for(String par : appender.getParams()){
-            if(param.equalsIgnoreCase(par)) return true;
-        }
-        
-        //AppUtils.crash("Unsuported appender param: '" + param + "' for appender class: " + className);
         return false;
     }
     
+        
     private void checkLayoutParamSuported(String param){
         // TO DO?
     }

@@ -88,24 +88,24 @@ public class XmlToPropsConverter implements Converter {
             plugin.setUpFromElement(e);
             configuration.addPlugin(plugin);
         }
-        
         for(Element e : (List<Element>) rootElement.elements("logger")){
             cz.muni.pb138.log4j.model.Logger logger = new cz.muni.pb138.log4j.model.Logger();
             logger.setUpFromElement(e);
             configuration.addLogger(logger);
         }
         
+        
         if(rootElement.element("loggerFactory") != null){
             LoggerFactory loggerFactory = new LoggerFactory();
             loggerFactory.setUpFromElement(rootElement.element("loggerFactory"));
             configuration.setLoggerFactory(loggerFactory);
         }
-        
         if(rootElement.element("root") != null){
             cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
             rootLogger.setUpFromElement(rootElement.element("root"));
             configuration.addLogger(rootLogger);
         }
+        
                 
         //writing out
         

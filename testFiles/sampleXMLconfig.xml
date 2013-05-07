@@ -16,7 +16,8 @@
       </layout>
    </appender>
 
-   <logger name="TESTLOGGER">
+   <logger name="TESTLOGGER" additivity="false" class="org.test.class">         
+        <param name="testParam" value="testVal" />
 	<level value="warn"/>
 	<appender-ref ref="fileAppender"/>
    </logger>
@@ -27,7 +28,13 @@
    </logger>
 
    <logger name="TESTLOGGER3">
-      <level value="warn" class="12312testclass.com "/>
+      <level value="warns" class="12312testclass.com ">
+            <param name="testParam" value="testVal" />
+      </level>
+      <appender-ref ref="fileAppender"/>
+   </logger>
+
+   <logger name="TESTLOGGER4----">
       <appender-ref ref="fileAppender"/>
    </logger>
 

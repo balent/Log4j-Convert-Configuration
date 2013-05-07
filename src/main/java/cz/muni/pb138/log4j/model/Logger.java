@@ -142,12 +142,13 @@ public class Logger {
         for(Element e : (List<Element>) element.elements("param")){
             addParam(e.attributeValue("name"), e.attributeValue("value"));
         }
-        
+        //TODO zistit co to ma robit ked nie je uvedeny level
         if(element.element("level") != null){
             
             loggerLevel = new LoggerLevel();
             loggerLevel.setUpFromElement(element.element("level"));
         }
+        
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
             addAppenderName(e.attributeValue("ref"));
@@ -160,11 +161,15 @@ public class Logger {
     
     
     public List<String> toProperty(List<String> prop) {
-        String levelToProp = loggerLevel.getLevel();
+        
+        String levelToProp = (loggerLevel != null) ? loggerLevel.getLevel() : "";
         String apenders = AppUtils.join(appenderNames, ", ");
         String value;
         
-        if(!loggerLevel.getLevelClass().isEmpty()) {
+        
+        prop.add("");
+        
+        if(loggerLevel != null && !loggerLevel.getLevelClass().isEmpty()) {
             
             StringBuilder levelToPropBld = new StringBuilder(levelToProp);
             levelToPropBld.append("#");
@@ -180,14 +185,35 @@ public class Logger {
             value = levelToProp;
         }
         
+        //root
         if(isRootLogger()) {            
             prop.add(AppUtils.prefix("rootLogger") + " = " + value);
         }
+        //anoteher logger
         else {
             prop.add(AppUtils.prefix("logger." + name) + " = " + value);
-            prop.add(AppUtils.prefix("additivity." + name) + " = " + additivity);
+            if(!additivity.isEmpty()){
+                prop.add(AppUtils.prefix("additivity." + name) + " = " + additivity);
+            }
+            
         }
-        prop.add("");
+        //params
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            prop.add(AppUtils.prefix("logger." + name + "." + entry.getKey() + " = "+entry.getValue()));
+        }
+        //custom class
+        if(!customClass.isEmpty()) {
+            prop.add(AppUtils.prefix("logger." + name + ".class = "+customClass));
+        }
+        
+        //level --- TODO ci je dobry format
+        if(loggerLevel != null) {
+            for (Map.Entry<String, String> entry : loggerLevel.getParams().entrySet()) {
+                prop.add(AppUtils.prefix("logger.level." + entry.getKey() + " = "+entry.getValue()));
+            }
+        }
+        
+        
         return prop;
     }
 }
