@@ -2,8 +2,11 @@ package cz.muni.pb138.log4j;
 
 import cz.muni.pb138.log4j.model.Appender;
 import cz.muni.pb138.log4j.model.Configuration;
+import cz.muni.pb138.log4j.model.LoggerFactory;
+import cz.muni.pb138.log4j.model.Plugin;
 import cz.muni.pb138.log4j.model.Renderer;
 import cz.muni.pb138.log4j.model.Threshold;
+import cz.muni.pb138.log4j.model.ThrowableRenderer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -67,10 +70,22 @@ public class XmlToPropsConverter implements Converter {
             configuration.addRenderer(renderer);
         }
         
+        if(rootElement.element("throwableRenderer") != null){
+            ThrowableRenderer tRenderer = new ThrowableRenderer();
+            tRenderer.setUpFromElement(rootElement.element("throwableRenderer"));
+            configuration.setThrowableRenderer(tRenderer);
+        }
+        
         for(Element e : (List<Element>) rootElement.elements("appender")){
             Appender appender = new Appender();
             appender.setUpFromElement(e);
             configuration.addAppender(appender);
+        }
+        
+        for(Element e : (List<Element>) rootElement.elements("plugin")){
+            Plugin plugin = new Plugin();
+            plugin.setUpFromElement(e);
+            configuration.addPlugin(plugin);
         }
         
         for(Element e : (List<Element>) rootElement.elements("logger")){
@@ -79,10 +94,19 @@ public class XmlToPropsConverter implements Converter {
             configuration.addLogger(logger);
         }
         
-        cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
-        rootLogger.setUpFromElement(rootElement.element("root"));
-        configuration.addLogger(rootLogger);
+        if(rootElement.element("loggerFactory") != null){
+            LoggerFactory loggerFactory = new LoggerFactory();
+            loggerFactory.setUpFromElement(rootElement.element("loggerFactory"));
+            configuration.setLoggerFactory(loggerFactory);
+        }
         
+        if(rootElement.element("root") != null){
+            cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
+            rootLogger.setUpFromElement(rootElement.element("root"));
+            configuration.addLogger(rootLogger);
+        }
+                
+        //writing out
         OutputStream out = new FileOutputStream(outputFile);
         
         Properties prop = configuration.toProperties();

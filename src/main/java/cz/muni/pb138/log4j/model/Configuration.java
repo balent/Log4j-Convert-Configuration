@@ -16,12 +16,31 @@ public class Configuration {
     private Map<String, Renderer> renderers = new HashMap<String, Renderer>();
     private Map<String, Logger> loggers = new HashMap<String, Logger>();
     private Map<String, Appender> appenders = new HashMap<String, Appender>();
+    private Map<String, Plugin> plugins = new HashMap<String, Plugin>();
     private Logger rootLogger;
     private Threshold threshold;
     private Boolean debug;
     private Boolean reset;
     private String wideThreshold;
     private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Configuration.class);
+    private ThrowableRenderer throwableRenderer;
+    private LoggerFactory loggerFactory;
+
+    public LoggerFactory getLoggerFactory() {
+        return loggerFactory;
+    }
+
+    public void setLoggerFactory(LoggerFactory loggerFactory) {
+        this.loggerFactory = loggerFactory;
+    }
+
+    public ThrowableRenderer getThrowableRenderer() {
+        return throwableRenderer;
+    }
+
+    public void setThrowableRenderer(ThrowableRenderer throwableRenderer) {
+        this.throwableRenderer = throwableRenderer;
+    }
 
     public Map<String, Renderer> getRenderers() {
         return renderers;
@@ -32,6 +51,14 @@ public class Configuration {
             renderers.put(renderer.getRenderedClass(), renderer);
         }else{
             AppUtils.crash("Two renderers for the class: " + renderer.getRenderedClass());
+        }
+    }
+    
+    public void addPlugin(Plugin plugin){
+        if(plugins.get(plugin.getName()) == null){
+            plugins.put(plugin.getName(), plugin);
+        }else{
+            AppUtils.crash("Two plugins with the same name: " + plugin.getName());
         }
     }
 

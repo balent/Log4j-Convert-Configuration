@@ -12,9 +12,9 @@ import org.dom4j.Element;
 
 /**
  *
- * @author xmarko2
+ * @author jozef
  */
-public class LoggerFactory {
+public class DataSource {
     private String className;
     private Map<String, String> params = new HashMap<String, String>();
     
