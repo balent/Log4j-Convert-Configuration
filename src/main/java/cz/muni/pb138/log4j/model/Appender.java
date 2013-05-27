@@ -221,4 +221,28 @@ public class Appender {
     private void checkLayoutParamSuported(String param){
         // TO DO?
     }
+    
+    public List<String> toProperty(List<String> prop) {
+        
+        prop.add("");
+        prop.add(AppUtils.prefix("appender." + name + " = " + className));
+        
+        if(threshold != null && !threshold.isEmpty()) {
+            prop.add(AppUtils.prefix("appender.threshold = " + threshold));
+        }
+        
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            prop.add(AppUtils.prefix("appender." + name + "." + entry.getKey() + " = "+entry.getValue()));
+        }
+        
+        if(hasLayoutAlready) {
+            prop.add(AppUtils.prefix("appender." + name + ".layout = " + layoutClassName));
+            
+            for (Map.Entry<String, String> entry : layoutParams.entrySet()) {
+                prop.add(AppUtils.prefix("appender." + name + ".layout." + entry.getKey() + " = "+entry.getValue()));
+            }
+        }
+        
+        return prop;
+    }
 }
