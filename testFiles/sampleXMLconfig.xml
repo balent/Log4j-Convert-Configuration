@@ -34,10 +34,6 @@
       <appender-ref ref="fileAppender"/>
    </logger>
 
-   <logger name="TESTLOGGER4----">
-      <appender-ref ref="fileAppender"/>
-   </logger>
-
    <root>
       <level value="INFO"/>
       <appender-ref ref="consoleAppender"/>

@@ -192,7 +192,7 @@ public class Logger {
         //anoteher logger
         else {
             prop.add(AppUtils.prefix("logger." + name) + " = " + value);
-            if(!additivity.isEmpty()){
+            if(additivity!= null && !additivity.isEmpty()){
                 prop.add(AppUtils.prefix("additivity." + name) + " = " + additivity);
             }
             
@@ -202,7 +202,7 @@ public class Logger {
             prop.add(AppUtils.prefix("logger." + name + "." + entry.getKey() + " = "+entry.getValue()));
         }
         //custom class
-        if(!customClass.isEmpty()) {
+        if(customClass !=null && !customClass.isEmpty()) {
             prop.add(AppUtils.prefix("logger." + name + ".class = "+customClass));
         }
         

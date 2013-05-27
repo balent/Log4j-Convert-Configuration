@@ -275,6 +275,11 @@ public class Configuration {
             }
         }
         
+        for(cz.muni.pb138.log4j.model.Appender appender : appenders.values()) {
+            appender.toProperty(prop);
+            
+        }
+        
         return prop;
     }
 }
