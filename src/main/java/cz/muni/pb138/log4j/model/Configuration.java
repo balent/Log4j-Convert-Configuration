@@ -11,6 +11,7 @@ import cz.muni.pb138.log4j.AppUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 public class Configuration {
@@ -281,5 +282,86 @@ public class Configuration {
         }
         
         return prop;
+    }
+    
+    public void setUpFromElement(Element rootElement){
+        String thresholdAtt = rootElement.attributeValue("threshold");
+        String debugAtt = rootElement.attributeValue("debug");
+        String resetAtt = rootElement.attributeValue("reset");
+        
+        
+            
+        if(thresholdAtt != null){
+            
+            if(!thresholdAtt.equalsIgnoreCase("null")){
+                thresholdAtt = thresholdAtt.toLowerCase(Locale.ENGLISH);
+                //configuration.setThreshold(thresholdAtt);
+                setThreshold(thresholdAtt);
+            }
+        }
+        
+        if(debugAtt != null){
+            if(! debugAtt.equalsIgnoreCase("null")){
+                debugAtt = debugAtt.toLowerCase(Locale.ENGLISH);
+                //configuration.setDebug(debugAtt);
+                setDebug(debugAtt);
+            }
+        }
+        
+        if(resetAtt != null){
+            if(! resetAtt.equalsIgnoreCase("null")){
+                resetAtt = resetAtt.toLowerCase(Locale.ENGLISH);
+                //configuration.setReset(resetAtt);
+                setReset(resetAtt);
+            }
+        }
+        
+        for(Element e : (List<Element>) rootElement.elements("renderer")){
+            Renderer renderer = new Renderer();
+            renderer.setUpFromElement(e);
+            //configuration.addRenderer(renderer);
+            addRenderer(renderer);
+        }
+        
+        if(rootElement.element("throwableRenderer") != null){
+            ThrowableRenderer tRenderer = new ThrowableRenderer();
+            tRenderer.setUpFromElement(rootElement.element("throwableRenderer"));
+            //configuration.setThrowableRenderer(tRenderer);
+            setThrowableRenderer(tRenderer);
+        }
+        
+        for(Element e : (List<Element>) rootElement.elements("appender")){
+            Appender appender = new Appender();
+            appender.setUpFromElement(e);
+            //configuration.addAppender(appender);
+            addAppender(appender);
+        }
+        
+        for(Element e : (List<Element>) rootElement.elements("plugin")){
+            Plugin plugin = new Plugin();
+            plugin.setUpFromElement(e);
+            //configuration.addPlugin(plugin);
+            addPlugin(plugin);
+        }
+        for(Element e : (List<Element>) rootElement.elements("logger")){
+            cz.muni.pb138.log4j.model.Logger logger = new cz.muni.pb138.log4j.model.Logger();
+            logger.setUpFromElement(e);
+            //configuration.addLogger(logger);
+            addLogger(logger);
+        }
+        
+        
+        if(rootElement.element("loggerFactory") != null){
+            LoggerFactory loggerFactory = new LoggerFactory();
+            loggerFactory.setUpFromElement(rootElement.element("loggerFactory"));
+            //configuration.setLoggerFactory(loggerFactory);
+            setLoggerFactory(loggerFactory);
+        }
+        if(rootElement.element("root") != null){
+            cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
+            rootLogger.setUpFromElement(rootElement.element("root"));
+            //configuration.addLogger(rootLogger);
+            addLogger(rootLogger);
+        }
     }
 }

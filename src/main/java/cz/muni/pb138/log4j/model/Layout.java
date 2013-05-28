@@ -1,11 +1,11 @@
 package cz.muni.pb138.log4j.model;
 
 public enum Layout {
-    SimpleLayout("org.apache.log4j.SimpleLayout", null, null), 
+    SimpleLayout("org.apache.log4j.SimpleLayout", null, null),
     PatternLayout("org.apache.log4j.PatternLayout", "ConversionPattern", null),
-    EnhancedPatternLayout("org.apache.log4j.EnhancedPatternLayout", "ConversionPattern", null), 
+    EnhancedPatternLayout("org.apache.log4j.EnhancedPatternLayout", "ConversionPattern", null),
     DateLayout("org.apache.log4j.DateLayout", "DateFormat", null),
-    HTMLLayout("org.apache.log4j.HTMLLayout", "LocationInfo", "Title"), 
+    HTMLLayout("org.apache.log4j.HTMLLayout", "LocationInfo", "Title"),
     XMLLayout("org.apache.log4j.XMLLayout", "LocationInfo", null);
     
     private String fullName;
