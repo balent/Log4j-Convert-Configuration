@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<appender name="fileAPPENDER" class="org.apache.log4j.FileAppender">
+	<param name="File" value="/tmp/debug.log" />
+	<param name="Append" value="false" />
+	<param name="Encoding" value="UTF-8"/> 
+	<param name="BufferSize" value="1024"/>
+	<param name="Threshold" value="WARN"/>
+	<layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern"	value="%d{HH:mm:ss}" />
+	</layout>
+	<appender-ref ref="unknownAppender" />
+</appender>

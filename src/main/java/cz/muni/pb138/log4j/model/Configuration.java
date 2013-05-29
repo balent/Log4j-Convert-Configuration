@@ -191,7 +191,7 @@ public class Configuration {
         Element rootElement = document.addElement("log4j:configuration");
         rootElement.addNamespace("log4j", "http://jakarta.apache.org/log4j/");
         if (wideThreshold != null) {
-            rootElement.addAttribute("threshold", wideThreshold);
+            rootElement.addAttribute("threshold", wideThreshold.toLowerCase());
         }
 
         for (Appender appender : appenders.values()) {

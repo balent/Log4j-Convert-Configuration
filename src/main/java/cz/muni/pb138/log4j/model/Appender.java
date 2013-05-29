@@ -174,6 +174,7 @@ public class Appender {
         }
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
+            System.out.println("XXX " + e.attributeValue("ref"));
             addAppenderRef(e.attributeValue("ref"));
         }
     }
@@ -343,4 +344,53 @@ public class Appender {
         }
         // + verify correctness of some values for defined parameters
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 31 * hash + (this.className != null ? this.className.hashCode() : 0);
+        hash = 31 * hash + (this.layoutClassName != null ? this.layoutClassName.hashCode() : 0);
+        hash = 31 * hash + (this.hasLayoutAlready ? 1 : 0);
+        hash = 31 * hash + (this.threshold != null ? this.threshold.hashCode() : 0);
+        hash = 31 * hash + (this.params != null ? this.params.hashCode() : 0);
+        hash = 31 * hash + (this.layoutParams != null ? this.layoutParams.hashCode() : 0);
+        hash = 31 * hash + (this.errorHandler != null ? this.errorHandler.hashCode() : 0);
+        hash = 31 * hash + (this.appenderRefs != null ? this.appenderRefs.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Appender other = (Appender) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.className == null) ? (other.className != null) : !this.className.equals(other.className)) {
+            return false;
+        }
+        if ((this.layoutClassName == null) ? (other.layoutClassName != null) : !this.layoutClassName.equals(other.layoutClassName)) {
+            return false;
+        }
+        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+            return false;
+        }
+        if (this.layoutParams != other.layoutParams && (this.layoutParams == null || !this.layoutParams.equals(other.layoutParams))) {
+            return false;
+        }
+        if (this.errorHandler != other.errorHandler && (this.errorHandler == null || !this.errorHandler.equals(other.errorHandler))) {
+            return false;
+        }
+        if (this.appenderRefs != other.appenderRefs && (this.appenderRefs == null || !this.appenderRefs.equals(other.appenderRefs))) {
+            return false;
+        }
+        return true;
+    }
+    
 }
