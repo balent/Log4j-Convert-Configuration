@@ -219,6 +219,35 @@ public class Logger {
         return prop;
     }
     
+    public void verify() {
+            if(additivity != null) {
+                if(additivity != "true" && additivity != "false") {
+                    AppUtils.crash("Aditivity must be boolen");
+                }
+            }
+            
+            if(loggerLevel != null) {
+                if(!loggerLevel.checkStandardLevel(loggerLevel.getLevel()))  {
+                    AppUtils.crash("Level is not standard");
+                }
+            }
+            
+            if(name != null && name.contains(" ")) {
+                AppUtils.crash("Logger name cannot contains a space. Name was" + name);
+            }
+            
+            if(customClass != null && customClass.contains(" ")) {
+                AppUtils.crash("Logger class cannot contains a space. Class name was" + customClass);
+            }
+            
+            for(String appender : appenderNames) {
+                if(appender.contains(" ")) {
+                    AppUtils.crash("Appender name can not contains a space. Appender name was" + appender);
+                }
+            }
+        
+        }
+    
     private class LoggerLevel {
     
         private String level;
@@ -294,5 +323,7 @@ public class Logger {
                return false;
             }
         }
+        
+        
     }
 }

@@ -1,6 +1,7 @@
 package cz.muni.pb138.log4j;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -94,7 +95,7 @@ public class Main {
 
         try {
             converter.convert(inputFile, outputFile);
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             log.error(ex.getMessage());
             log.debug(ex.getMessage(), ex);
             AppUtils.crash("Input file doesn't exist",ex);
