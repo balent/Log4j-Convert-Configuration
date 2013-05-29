@@ -25,7 +25,7 @@ public class PropsToXmlConverter implements Converter {
             properties.load(fis);
         } catch (Exception ex) {
             log.error("Provided file is not in valid property format.");
-            System.exit(2);
+            AppUtils.crash("Provided file is not in valid property format.");
         }
 
         // now you have properties object and you can work with it.

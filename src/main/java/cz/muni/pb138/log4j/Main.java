@@ -84,7 +84,7 @@ public class Main {
         
         if (!inputFile.exists()) {
             log.error("Input file doesn't exist");
-            System.exit(2);
+            AppUtils.crash("Input file doesn't exist");
         }
         
         if (outputFile.exists()) {
@@ -97,7 +97,7 @@ public class Main {
         } catch (Exception ex) {
             log.error(ex.getMessage());
             log.debug(ex.getMessage(), ex);
-            System.exit(2);
+            AppUtils.crash("Input file doesn't exist",ex);
         }
         
         System.out.println("File successfully converted");
@@ -106,6 +106,6 @@ public class Main {
     private static void displayHelpAndExit(Options options, int exitValue) {
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("log4j-convert", options);
-        System.exit(exitValue);
+        AppUtils.crash("Wrong options");
     }
 }
