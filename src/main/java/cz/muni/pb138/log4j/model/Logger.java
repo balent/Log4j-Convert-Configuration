@@ -7,9 +7,11 @@ import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.log4j.Level;
 import org.apache.log4j.lf5.LogLevel;
 
@@ -51,9 +53,28 @@ public class Logger {
     public void setAdditivity(String additivity) {
         this.additivity = additivity;
     }
-
+  
     public String getLevel() {
         return level;
+    }
+
+    public LoggerLevel getLoggerLevel() {
+        return loggerLevel;
+    }
+
+    public void setLoggerLevel(String level) {
+        if(loggerLevel == null) loggerLevel = new LoggerLevel();
+        loggerLevel.setLevel(level);   
+    }
+    
+    public void setLoggerLevelClass(String levelClass) {
+        if(loggerLevel == null) loggerLevel = new LoggerLevel();
+        loggerLevel.setLevelClass(levelClass);   
+    }
+    
+    public void addLoggerLevelParam(String key, String val) {
+        if(loggerLevel == null) loggerLevel = new LoggerLevel();
+        loggerLevel.addParam(key, val); 
     }
 
     public boolean isRootLogger() {
@@ -294,5 +315,77 @@ public class Logger {
                return false;
             }
         }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 97 * hash + (this.level != null ? this.level.hashCode() : 0);
+            hash = 97 * hash + (this.params != null ? this.params.hashCode() : 0);
+            hash = 97 * hash + (this.levelClass != null ? this.levelClass.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final LoggerLevel other = (LoggerLevel) obj;
+            if ((this.level == null) ? (other.level != null) : !this.level.equals(other.level)) {
+                return false;
+            }
+            if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+                return false;
+            }
+            if ((this.levelClass == null) ? (other.levelClass != null) : !this.levelClass.equals(other.levelClass)) {
+                return false;
+            }
+            return true;
+        }
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.appenderNames != null ? this.appenderNames.hashCode() : 0);
+        hash = 79 * hash + (this.params != null ? this.params.hashCode() : 0);
+        hash = 79 * hash + (this.additivity != null ? this.additivity.hashCode() : 0);
+        hash = 79 * hash + (this.loggerLevel != null ? this.loggerLevel.hashCode() : 0);
+        hash = 79 * hash + (this.isRootLogger ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Logger other = (Logger) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if (this.appenderNames != other.appenderNames && (this.appenderNames == null || !this.appenderNames.equals(other.appenderNames))) {
+            return false;
+        }
+        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+            return false;
+        }
+        if ((this.additivity == null) ? (other.additivity != null) : !this.additivity.equals(other.additivity)) {
+            return false;
+        }
+        if (this.loggerLevel != other.loggerLevel && (this.loggerLevel == null || !this.loggerLevel.equals(other.loggerLevel))) {
+            return false;
+        }
+        if (this.isRootLogger != other.isRootLogger) {
+            return false;
+        }
+        return true;
     }
 }
