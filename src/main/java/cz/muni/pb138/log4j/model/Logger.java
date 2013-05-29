@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.log4j.Level;
 import org.apache.log4j.lf5.LogLevel;
 
 public class Logger {
@@ -76,7 +77,8 @@ public class Logger {
         String[] values = value.replaceAll("\\s", "").split(",");
 
         try {
-            level = Threshold.valueOf(values[0]).toString();
+            level = Level.toLevel(values[0]).toString(); // FOR MARTIN: Nahrada za level = Threshold.valueOf(values[0]).toString()
+            
             // logger may even have no level assigned - however there is no way to recognize whether
             // first value is an appender name or a wrong level name = this app REQUIRES null/inherited
             // level for all loggers where implied inheritance is intended and debug level of root logger

@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import org.apache.log4j.Level;
 
 public class Configuration {
 
@@ -21,7 +22,7 @@ public class Configuration {
     private Map<String, Appender> appenders = new HashMap<String, Appender>();
     private Map<String, Plugin> plugins = new HashMap<String, Plugin>();
     private Logger rootLogger;
-    private Threshold threshold;
+    private Level threshold; // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
     private Boolean debug;
     private Boolean reset;
     private String wideThreshold;
@@ -93,7 +94,7 @@ public class Configuration {
         return rootLogger;
     }
 
-    public Threshold getThreshold() {
+    public Level getThreshold() { // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
         return threshold;
     }
 
@@ -126,9 +127,9 @@ public class Configuration {
     }
 
     
-    public void setThreshold(String threshold) {
+    public void setThreshold(String threshold) { 
         try {
-            this.threshold = Threshold.valueOf(threshold);
+            this.threshold = Level.toLevel(threshold); // FOR MARTIN: Nahrada za this.threshold = Threshold.valueOf(threshold)
         } catch (Exception ex) {
             AppUtils.crash("You have specified wrong configuration threshold", ex);
         }
@@ -175,7 +176,7 @@ public class Configuration {
             }
         } else if (key.equals("threshold")) {
             try {
-                wideThreshold = Threshold.valueOf(value).toString();
+                wideThreshold = Level.toLevel(value).toString(); // FOR MARTIN: Nahrada za wideThreshold = Threshold.valueOf(value).toString()
             } catch (IllegalArgumentException ex) {
                 AppUtils.crash("Wrong hierarchy-wide threshold has been given.", ex);
             }
@@ -207,7 +208,7 @@ public class Configuration {
                 Map.Entry<String, String> paramCouple = iter.next();
                 if (paramCouple.getKey().equals("threshold")) {
                     try {
-                        Threshold.valueOf(paramCouple.getValue());
+                        Level.toLevel(paramCouple.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
                     } catch (IllegalArgumentException ex) {
                         AppUtils.crash("You have entered wrong threshold for appender" + appender.getName());
                     }
