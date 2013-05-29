@@ -7,8 +7,10 @@ import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import org.apache.log4j.Level;
 
 public class Appender {
     private String name;
@@ -21,6 +23,9 @@ public class Appender {
     private ErrorHandler errorHandler;
     private Map<String, AppenderFilter> filters  = new HashMap<String, AppenderFilter>();
     private List<String> appenderRefs = new ArrayList<String>();
+    
+    // nutne kôli (podla mna nepotrebnemu) logovaniu vo verify, martin by mohol povedat ci to nezmazeme
+    private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Appender.class);
 
     public String getName() {
         return name;
@@ -244,5 +249,86 @@ public class Appender {
         }
         
         return prop;
+    }
+    
+    private enum Layout {
+        SimpleLayout("org.apache.log4j.SimpleLayout", null, null),
+        PatternLayout("org.apache.log4j.PatternLayout", "ConversionPattern", null),
+        EnhancedPatternLayout("org.apache.log4j.EnhancedPatternLayout", "ConversionPattern", null),
+        DateLayout("org.apache.log4j.DateLayout", "DateFormat", null),
+        HTMLLayout("org.apache.log4j.HTMLLayout", "LocationInfo", "Title"),
+        XMLLayout("org.apache.log4j.XMLLayout", "LocationInfo", null);
+
+        private String fullName;
+        private String param1;
+        private String param2;
+
+        Layout(String fullName, String param1, String param2) {
+            this.fullName = fullName;
+            this.param1 = param1;
+            this.param2 = param2;
+        }
+
+        public String getParam1() {
+            return param1;
+        }
+
+        public String getParam2() {
+            return param2;
+        }
+
+        @Override
+        public String toString() {
+            return fullName;
+        }
+    }
+    
+    public void verify() {
+        boolean loggedAlready = false;
+        // verify layouts
+        if (getLayoutClassName() != null) {     // there is a layout present
+            for (Layout layout : Layout.values()) {
+                if (getLayoutClassName().equalsIgnoreCase(layout.toString())) {
+                    for (String layoutParam : getLayoutParams().keySet()) {
+                        if (!layoutParam.equalsIgnoreCase(layout.getParam1())
+                                && !layoutParam.equalsIgnoreCase(layout.getParam2())) {
+                            AppUtils.crash("You have entered wrong layout parameter.");
+                        }
+                    }
+                }
+            }
+        }
+        Iterator<Map.Entry<String, String>> iter = getParams().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, String> paramCouple = iter.next();
+            if (paramCouple.getKey().equals("threshold")) {
+                try {
+                    Level.toLevel(paramCouple.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
+                } catch (IllegalArgumentException ex) {
+                    AppUtils.crash("You have entered wrong threshold for appender" + getName());
+                }
+            } else {
+                try {
+                    boolean paramFound = false;
+                    for (String param : AppenderParams.valueOf(getName()).getParams()) {
+                        if (param.equalsIgnoreCase(paramCouple.getKey())) {
+                            paramFound = true;
+                            break;
+                        } 
+                    }
+                    if(!paramFound) {
+                        AppUtils.crash("You have entered wrong parameter \""
+                                + paramCouple.getKey() + "\" for appender: " + getName());
+                    }
+                } catch (IllegalArgumentException ex) {
+                    // custom defined appender: possible & it can have any parameter
+                    if(!loggedAlready) {
+                        log.info("Custom appender: " + getName());
+                    }
+                    loggedAlready = true;
+                }
+            }
+        }
+        // + verify correctness of some values for defined parameters
     }
 }

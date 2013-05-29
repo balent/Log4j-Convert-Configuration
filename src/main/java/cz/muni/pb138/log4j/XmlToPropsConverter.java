@@ -27,6 +27,8 @@ public class XmlToPropsConverter implements Converter {
         configuration = new Configuration();
         
         configuration.setUpFromElement(rootElement);
+        
+        configuration.verify();
                 
         //writing out
         

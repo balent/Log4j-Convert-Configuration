@@ -26,7 +26,6 @@ public class Configuration {
     private Boolean debug;
     private Boolean reset;
     private String wideThreshold;
-    private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Configuration.class);
     private ThrowableRenderer throwableRenderer;
     private LoggerFactory loggerFactory;
 
@@ -189,52 +188,7 @@ public class Configuration {
 
         // verify appenders + layouts
         for (Appender appender : appenders.values()) {
-            boolean loggedAlready = false;
-            // verify layouts
-            if (appender.getLayoutClassName() != null) {     // there is a layout present
-                for (Layout layout : Layout.values()) {
-                    if (appender.getLayoutClassName().equalsIgnoreCase(layout.toString())) {
-                        for (String layoutParam : appender.getLayoutParams().keySet()) {
-                            if (!layoutParam.equalsIgnoreCase(layout.getParam1())
-                                    && !layoutParam.equalsIgnoreCase(layout.getParam2())) {
-                                AppUtils.crash("You have entered wrong layout parameter.");
-                            }
-                        }
-                    }
-                }
-            }
-            Iterator<Map.Entry<String, String>> iter = appender.getParams().entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, String> paramCouple = iter.next();
-                if (paramCouple.getKey().equals("threshold")) {
-                    try {
-                        Level.toLevel(paramCouple.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
-                    } catch (IllegalArgumentException ex) {
-                        AppUtils.crash("You have entered wrong threshold for appender" + appender.getName());
-                    }
-                } else {
-                    try {
-                        boolean paramFound = false;
-                        for (String param : AppenderParams.valueOf(appender.getName()).getParams()) {
-                            if (param.equalsIgnoreCase(paramCouple.getKey())) {
-                                paramFound = true;
-                                break;
-                            } 
-                        }
-                        if(!paramFound) {
-                            AppUtils.crash("You have entered wrong parameter \""
-                                    + paramCouple.getKey() + "\" for appender: " + appender.getName());
-                        }
-                    } catch (IllegalArgumentException ex) {
-                        // custom defined appender: possible & it can have any parameter
-                        if(!loggedAlready) {
-                            log.info("Custom appender: " + appender.getName());
-                        }
-                        loggedAlready = true;
-                    }
-                }
-            }
-            // + verify correctness of some values for defined parameters
+            appender.verify();
         }
 
         // verify other object structure - TODO
