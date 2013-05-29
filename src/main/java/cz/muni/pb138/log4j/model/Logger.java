@@ -201,15 +201,14 @@ public class Logger {
             
         }
         //params
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            prop.add(AppUtils.prefix("logger." + name + "." + entry.getKey() + " = "+entry.getValue()));
-        }
+        AppUtils.addParams(prop, "logger." + name, params);
+        
         //custom class
         if(customClass !=null && !customClass.isEmpty()) {
             prop.add(AppUtils.prefix("logger." + name + ".class = "+customClass));
         }
         
-        //level --- TODO ci je dobry format
+        //level
         if(loggerLevel != null) {
             for (Map.Entry<String, String> entry : loggerLevel.getParams().entrySet()) {
                 prop.add(AppUtils.prefix("logger.level." + entry.getKey() + " = "+entry.getValue()));

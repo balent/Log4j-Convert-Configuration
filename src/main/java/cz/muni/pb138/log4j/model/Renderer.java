@@ -4,6 +4,8 @@
  */
 package cz.muni.pb138.log4j.model;
 
+import cz.muni.pb138.log4j.AppUtils;
+import java.util.List;
 import org.dom4j.Element;
 
 /**
@@ -34,5 +36,10 @@ public class Renderer {
     public void setUpFromElement(Element element){
         renderedClass = element.attributeValue("renderedClass");
         renderingClass = element.attributeValue("renderingClass");
+    }
+    
+    public List<String> toProperty(List<String> prop) {
+        prop.add(AppUtils.prefix("renderer." + renderedClass + " = " + renderingClass));
+        return prop;
     }
 }

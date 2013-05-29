@@ -209,22 +209,51 @@ public class Configuration {
     public List<String> toProperties(){        
         List<String> prop = new ArrayList<String>();
         
-        //root element at first
-        for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
-            if(logger.isRootLogger()){
-                logger.toProperty(prop);
-                break;
-            }
+        //root element at first   
+        if(rootLogger != null) {
+            rootLogger.toProperty(prop);
         }
+              
+        //loggers
         for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
             if(!logger.isRootLogger()){
                 logger.toProperty(prop);
             }
         }
         
+        //appenders
         for(cz.muni.pb138.log4j.model.Appender appender : appenders.values()) {
             appender.toProperty(prop);
             
+        }
+        //renderers
+        for(cz.muni.pb138.log4j.model.Renderer renderer : renderers.values()) {
+            renderer.toProperty(prop);
+            
+        }
+        
+        //another params
+  
+        if(threshold != null) {
+            prop.add(AppUtils.prefix("threshold = " + threshold));
+        }
+        if(debug != null) {
+            prop.add(AppUtils.prefix("debug = " + debug));
+        }
+        
+        if(reset != null) {
+            prop.add(AppUtils.prefix("reset = " + reset));
+        }
+        
+        if(wideThreshold != null && !wideThreshold.isEmpty()) {
+            prop.add(AppUtils.prefix("wideThreshold = " + wideThreshold));
+        }
+        
+        if(throwableRenderer != null) {
+            throwableRenderer.toProperty(prop, "");
+        }
+        if(loggerFactory != null) {
+            loggerFactory.toProperty(prop, "");
         }
         
         return prop;
