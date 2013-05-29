@@ -2,6 +2,12 @@ package cz.muni.pb138.log4j;
 
 import cz.muni.pb138.log4j.model.Configuration;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -14,7 +20,14 @@ public class XmlToPropsConverter implements Converter {
     private Configuration configuration;
     
     public void convert(File sourceFile, File outputFile) throws Exception {
-        DtdValidator dtdValidator = new DtdValidator(sourceFile);
+        FileInputStream fis = new FileInputStream(sourceFile);
+        FileOutputStream out = new FileOutputStream(outputFile);
+        
+        convert(fis,out);
+    }
+    
+    public void convert(InputStream inputStream, OutputStream outputStream) throws UnsupportedEncodingException, IOException {
+        DtdValidator dtdValidator = new DtdValidator(inputStream);
         
         Document document = dtdValidator.validate();
         
@@ -33,6 +46,6 @@ public class XmlToPropsConverter implements Converter {
         //writing out
         
         List<String> prop = configuration.toProperties();
-        AppUtils.store(prop, outputFile);
+        AppUtils.store(prop, outputStream);
     }
 }

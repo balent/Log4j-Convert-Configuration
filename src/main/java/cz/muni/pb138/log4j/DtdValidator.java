@@ -13,9 +13,9 @@ import org.xml.sax.InputSource;
 public class DtdValidator {
     private static Logger log = Logger.getLogger(DtdValidator.class);
     
-    File xmlFile;
+    InputStream xmlFile;
     
-    public DtdValidator(File xmlFile) {
+    public DtdValidator(InputStream xmlFile) {
         this.xmlFile = xmlFile;
     }
     

@@ -11,14 +11,26 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import cz.muni.pb138.log4j.model.Configuration;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 public class PropsToXmlConverter implements Converter {
 
     private static Logger log = Logger.getLogger(PropsToXmlConverter.class);
-
+    
     public void convert(File sourceFile, File outputFile) throws Exception {
         FileInputStream fis = new FileInputStream(sourceFile);
+        FileOutputStream out = new FileOutputStream(outputFile);
+        
+        convert(fis,out);
+    }
+
+    public void convert(InputStream inputStream, OutputStream outputStream) throws UnsupportedEncodingException, IOException {
+        FileInputStream fis = (FileInputStream) inputStream;
 
         Properties properties = new Properties();
         try {
@@ -49,7 +61,7 @@ public class PropsToXmlConverter implements Converter {
         Document document = configuration.toXML();
 
         OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer = new XMLWriter(new FileWriter(outputFile), format);
+        XMLWriter writer = new XMLWriter(outputStream, format);
         writer.write(document);
         writer.close();
     }

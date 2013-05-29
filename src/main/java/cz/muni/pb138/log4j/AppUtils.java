@@ -2,8 +2,11 @@ package cz.muni.pb138.log4j;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,14 +49,12 @@ public class AppUtils {
         return sb.toString();
     }
     
-    public static void store(List<String> prop, File file) {
+    public static void store(List<String> prop, OutputStream out) {
        
         
         try {
-            if (!file.exists()) {
-                    file.createNewFile();
-            }                        
-            FileWriter fw = new FileWriter(file);
+                                    
+            OutputStreamWriter fw = new OutputStreamWriter(out);
             BufferedWriter bw = new BufferedWriter(fw);
 
             //initial line
