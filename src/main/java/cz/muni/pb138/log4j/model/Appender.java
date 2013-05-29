@@ -229,15 +229,20 @@ public class Appender {
         //params 
         AppUtils.addParams(prop, "appender." + name, params);
         
-        if(hasLayoutAlready) {
+        if(layoutClassName != null) {
             prop.add(AppUtils.prefix("appender." + name + ".layout = " + layoutClassName));
                         
             AppUtils.addParams(prop, "appender." + name + ".layout", layoutParams);
         }
         
         if(errorHandler != null ){
-            prop.add(AppUtils.prefix("appender." + name + ".errorHandler = " + errorHandler.getClassName()));
-            AppUtils.addParams(prop, "appender." + name + ".errorHandler", errorHandler.getParams());
+            errorHandler.toProperty(prop, "appender." + name);
+        }
+        
+        if(appenderRefs != null && !appenderRefs.isEmpty()) {
+            //logger refs
+            String appenderRefsString = AppUtils.join( appenderRefs, ", ");
+            prop.add(AppUtils.prefix("appender." + name + ".appender-ref = " + appenderRefsString));
         }
         
         return prop;

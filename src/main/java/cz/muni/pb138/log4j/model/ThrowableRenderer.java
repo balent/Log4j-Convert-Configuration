@@ -34,4 +34,13 @@ public class ThrowableRenderer {
         }
     }
     
+    public List<String> toProperty(List<String> prop, String prefix) {
+        prefix = (prefix != "") ? prefix + "." : prefix;
+        
+        prop.add(AppUtils.prefix(prefix + "throwableRenderer = " + className));
+        AppUtils.addParams(prop, prefix + "throwableRenderer", params);
+        
+        return prop;
+    }
+    
 }
