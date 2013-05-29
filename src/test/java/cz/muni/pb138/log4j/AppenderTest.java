@@ -6,6 +6,9 @@ package cz.muni.pb138.log4j;
 
 import cz.muni.pb138.log4j.model.Appender;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dom4j.Document;
@@ -15,10 +18,7 @@ import org.dom4j.dom.DOMDocument;
 import org.dom4j.io.SAXReader;
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -26,21 +26,35 @@ import org.junit.Test;
  * @author jozef
  */
 public class AppenderTest {
-    private Appender patternAppender;
+    private Appender patternAppenderXML;
+    private List<String> patternAppenderProp;
 
     @Before
     public void setUp() {
-        patternAppender = new Appender();
-        patternAppender.setName("fileAPPENDER");
-        patternAppender.setClassName("org.apache.log4j.FileAppender");
-        patternAppender.setLayoutClassName("org.apache.log4j.PatternLayout");
-        patternAppender.addParam("File", "/tmp/debug.log");
-        patternAppender.addParam("Append", "false");
-        patternAppender.addParam("Encoding", "UTF-8");
-        patternAppender.addParam("BufferSize", "1024");
-        patternAppender.addParam("Threshold", "WARN");
-        patternAppender.addLayoutParam("ConversionPattern", "%d{HH:mm:ss}");
-        patternAppender.addAppenderRef("unknownAppender");
+        patternAppenderXML = new Appender();
+        patternAppenderXML.setName("fileAPPENDER");
+        patternAppenderXML.setClassName("org.apache.log4j.FileAppender");
+        patternAppenderXML.setLayoutClassName("org.apache.log4j.PatternLayout");
+        patternAppenderXML.addParam("File", "/tmp/debug.log");
+        patternAppenderXML.addParam("Append", "false");
+        patternAppenderXML.addParam("Encoding", "UTF-8");
+        patternAppenderXML.addParam("BufferSize", "1024");
+        patternAppenderXML.addParam("Threshold", "WARN");
+        patternAppenderXML.addLayoutParam("ConversionPattern", "%d{HH:mm:ss}");
+        patternAppenderXML.addAppenderRef("unknownAppender");
+        
+        patternAppenderProp = new ArrayList<String>();
+        patternAppenderProp.add("");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER = org.apache.log4j.FileAppender");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.layout = org.apache.log4j.PatternLayout");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.layout.ConversionPattern = %d{HH:mm:ss}");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.File = /tmp/debug.log");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.Append = false");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.Encoding = UTF-8");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.BufferSize = 1024");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.Threshold = WARN");                
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.appender-ref = unknownAppender");
+
     }
 
     @Test
@@ -59,6 +73,17 @@ public class AppenderTest {
         
         readedAppender.setUpFromElement(rootElement);
         
-        assertEquals(patternAppender, readedAppender);
+        assertEquals(patternAppenderXML, readedAppender);
+    }
+    
+    @Test
+    public void toPropertyTest() {
+        
+        List<String> ourOutput = patternAppenderXML.toProperty(new ArrayList<String>());
+        
+        Collections.sort(ourOutput);
+        Collections.sort(patternAppenderProp);
+        assertEquals(ourOutput.size(), patternAppenderProp.size());
+        assertEquals(ourOutput, patternAppenderProp);
     }
 }
