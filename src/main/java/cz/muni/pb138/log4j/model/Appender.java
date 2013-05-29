@@ -60,6 +60,8 @@ public class Appender {
     }
 
     public void addLayoutParam(String key, String value){
+        if(!checkLayoutParamSuported(key)) AppUtils.crash("Unsuported layout param: " + key + " in layout: " + layoutClassName);
+        
         if(layoutParams.get(key) == null){
              checkLayoutParamSuported(key);
              layoutParams.put(key, value);
@@ -199,8 +201,20 @@ public class Appender {
     }
     
         
-    private void checkLayoutParamSuported(String param){
-        // TO DO?
+    private boolean checkLayoutParamSuported(String param){
+        for (Layout layout : Layout.values())
+        {
+            if (getLayoutClassName().equalsIgnoreCase(layout.toString())) 
+            {
+                if(!layout.getParam1().equalsIgnoreCase(param)
+                  && (layout.getParam2() != null && !layout.getParam2().equalsIgnoreCase(param)))
+                {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
     
     public List<String> toProperty(List<String> prop) {
