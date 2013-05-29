@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
@@ -74,5 +75,12 @@ public class AppUtils {
         } catch (IOException e) {
                 crash("Cannot write into output file", e);
         }
+    }
+    
+    public static List<String> addParams (List<String> prop, String prefix, Map<String, String> params ) {
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+                prop.add(AppUtils.prefix(prefix + "." + entry.getKey() + " = "+entry.getValue()));
+        }
+        return prop;
     }
 }

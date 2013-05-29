@@ -226,16 +226,18 @@ public class Appender {
             prop.add(AppUtils.prefix("appender.threshold = " + threshold));
         }
         
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            prop.add(AppUtils.prefix("appender." + name + "." + entry.getKey() + " = "+entry.getValue()));
-        }
+        //params 
+        AppUtils.addParams(prop, "appender." + name, params);
         
         if(hasLayoutAlready) {
             prop.add(AppUtils.prefix("appender." + name + ".layout = " + layoutClassName));
-            
-            for (Map.Entry<String, String> entry : layoutParams.entrySet()) {
-                prop.add(AppUtils.prefix("appender." + name + ".layout." + entry.getKey() + " = "+entry.getValue()));
-            }
+                        
+            AppUtils.addParams(prop, "appender." + name + ".layout", layoutParams);
+        }
+        
+        if(errorHandler != null ){
+            prop.add(AppUtils.prefix("appender." + name + ".errorHandler = " + errorHandler.getClassName()));
+            AppUtils.addParams(prop, "appender." + name + ".errorHandler", errorHandler.getParams());
         }
         
         return prop;
