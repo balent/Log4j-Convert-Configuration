@@ -20,7 +20,6 @@ public class Configuration {
     private Map<String, Renderer> renderers = new HashMap<String, Renderer>();
     private Map<String, Logger> loggers = new HashMap<String, Logger>();
     private Map<String, Appender> appenders = new HashMap<String, Appender>();
-    private Map<String, Plugin> plugins = new HashMap<String, Plugin>();
     private Logger rootLogger;
     private Level threshold; // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
     private Boolean debug;
@@ -54,14 +53,6 @@ public class Configuration {
             renderers.put(renderer.getRenderedClass(), renderer);
         }else{
             AppUtils.crash("Two renderers for the class: " + renderer.getRenderedClass());
-        }
-    }
-    
-    public void addPlugin(Plugin plugin){
-        if(plugins.get(plugin.getName()) == null){
-            plugins.put(plugin.getName(), plugin);
-        }else{
-            AppUtils.crash("Two plugins with the same name: " + plugin.getName());
         }
     }
 
@@ -292,12 +283,6 @@ public class Configuration {
             addAppender(appender);
         }
         
-        for(Element e : (List<Element>) rootElement.elements("plugin")){
-            Plugin plugin = new Plugin();
-            plugin.setUpFromElement(e);
-            //configuration.addPlugin(plugin);
-            addPlugin(plugin);
-        }
         for(Element e : (List<Element>) rootElement.elements("logger")){
             cz.muni.pb138.log4j.model.Logger logger = new cz.muni.pb138.log4j.model.Logger();
             logger.setUpFromElement(e);
