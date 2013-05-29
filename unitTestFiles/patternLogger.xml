@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<logger name="com.google.name" additivity="false">
+	<level value="WARN" />
+	<appender-ref ref="appendJedna"/>
+	<appender-ref ref="appendDva"/>
+	<param name="DebugEnabled" value="false"/>
+</logger>
