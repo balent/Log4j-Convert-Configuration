@@ -33,6 +33,9 @@ public class AppenderTest {
     public void setUp() {
         patternAppenderXML = new Appender();
         patternAppenderXML.setName("fileAPPENDER");
+        patternAppenderXML.setErrorHandlerClassName("org.apache.BestHandler");
+        patternAppenderXML.addErrorHandlerLoggerRef("odkazNaLoger");
+        patternAppenderXML.setErrorHandlerAppenderRef("FallbackServerAppender");
         patternAppenderXML.setClassName("org.apache.log4j.FileAppender");
         patternAppenderXML.setLayoutClassName("org.apache.log4j.PatternLayout");
         patternAppenderXML.addParam("File", "/tmp/debug.log");
@@ -46,6 +49,9 @@ public class AppenderTest {
         patternAppenderProp = new ArrayList<String>();
         patternAppenderProp.add("");
         patternAppenderProp.add("log4j.appender.fileAPPENDER = org.apache.log4j.FileAppender");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorhandler = org.apache.BestHandler");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorhandler.logger-ref = odkazNaLoger");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorhandler.appender-ref = FallbackServerAppender");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.layout = org.apache.log4j.PatternLayout");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.layout.ConversionPattern = %d{HH:mm:ss}");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.File = /tmp/debug.log");

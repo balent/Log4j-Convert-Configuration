@@ -89,8 +89,23 @@ public class Appender {
         return errorHandler;
     }
 
-    public void setErrorHandler(ErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
+    public void setErrorHandler(ErrorHandler errHand) {
+        errorHandler =  errHand;
+    }
+    
+    public void setErrorHandlerClassName(String errClassName) {
+        if(errorHandler == null) errorHandler = new ErrorHandler();
+        errorHandler.setClassName(errClassName);
+    }
+    
+    public void addErrorHandlerLoggerRef(String ref){
+        if(errorHandler == null) errorHandler = new ErrorHandler();
+        errorHandler.addLogger(ref);
+    }
+    
+    public void setErrorHandlerAppenderRef(String ref){
+        if(errorHandler == null) errorHandler = new ErrorHandler();
+        errorHandler.setAppender(ref);
     }
     
     public List<String> getAppenderRefs() {
@@ -248,6 +263,103 @@ public class Appender {
         return prop;
     }
     
+    public void verify() {
+        boolean loggedAlready = false;
+        // verify layouts
+        if (getLayoutClassName() != null) {     // there is a layout present
+            for (Layout layout : Layout.values()) {
+                if (getLayoutClassName().equalsIgnoreCase(layout.toString())) {
+                    for (String layoutParam : getLayoutParams().keySet()) {
+                        if (!layoutParam.equalsIgnoreCase(layout.getParam1())
+                                && !layoutParam.equalsIgnoreCase(layout.getParam2())) {
+                            AppUtils.crash("You have entered wrong layout parameter.");
+                        }
+                    }
+                }
+            }
+        }
+        Iterator<Map.Entry<String, String>> iter = getParams().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<String, String> paramCouple = iter.next();
+            if (paramCouple.getKey().equals("threshold")) {
+                try {
+                    Level.toLevel(paramCouple.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
+                } catch (IllegalArgumentException ex) {
+                    AppUtils.crash("You have entered wrong threshold for appender" + getName());
+                }
+            } else {
+                try {
+                    boolean paramFound = false;
+                    for (String param : AppenderParams.valueOf(getName()).getParams()) {
+                        if (param.equalsIgnoreCase(paramCouple.getKey())) {
+                            paramFound = true;
+                            break;
+                        } 
+                    }
+                    if(!paramFound) {
+                        AppUtils.crash("You have entered wrong parameter \""
+                                + paramCouple.getKey() + "\" for appender: " + getName());
+                    }
+                } catch (IllegalArgumentException ex) {
+                    // custom defined appender: possible & it can have any parameter
+                    if(!loggedAlready) {
+                        //log.info("Custom appender: " + getName());
+                    }
+                    loggedAlready = true;
+                }
+            }
+        }
+        // + verify correctness of some values for defined parameters
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 31 * hash + (this.className != null ? this.className.hashCode() : 0);
+        hash = 31 * hash + (this.layoutClassName != null ? this.layoutClassName.hashCode() : 0);
+        hash = 31 * hash + (this.hasLayoutAlready ? 1 : 0);
+        hash = 31 * hash + (this.threshold != null ? this.threshold.hashCode() : 0);
+        hash = 31 * hash + (this.params != null ? this.params.hashCode() : 0);
+        hash = 31 * hash + (this.layoutParams != null ? this.layoutParams.hashCode() : 0);
+        hash = 31 * hash + (this.errorHandler != null ? this.errorHandler.hashCode() : 0);
+        hash = 31 * hash + (this.appenderRefs != null ? this.appenderRefs.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Appender other = (Appender) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.className == null) ? (other.className != null) : !this.className.equals(other.className)) {
+            return false;
+        }
+        if ((this.layoutClassName == null) ? (other.layoutClassName != null) : !this.layoutClassName.equals(other.layoutClassName)) {
+            return false;
+        }
+        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+            return false;
+        }
+        if (this.layoutParams != other.layoutParams && (this.layoutParams == null || !this.layoutParams.equals(other.layoutParams))) {
+            return false;
+        }
+        if (this.errorHandler != other.errorHandler && (this.errorHandler == null || !this.errorHandler.equals(other.errorHandler))) {
+            return false;
+        }
+        if (this.appenderRefs != other.appenderRefs && (this.appenderRefs == null || !this.appenderRefs.equals(other.appenderRefs))) {
+            return false;
+        }
+        return true;
+    }
+    
     private enum AppenderParams {
 
         consoleappender("Encoding", "ImmediateFlush", "Target", "Threshold"),
@@ -302,101 +414,135 @@ public class Appender {
         }
     }
     
-    public void verify() {
-        boolean loggedAlready = false;
-        // verify layouts
-        if (getLayoutClassName() != null) {     // there is a layout present
-            for (Layout layout : Layout.values()) {
-                if (getLayoutClassName().equalsIgnoreCase(layout.toString())) {
-                    for (String layoutParam : getLayoutParams().keySet()) {
-                        if (!layoutParam.equalsIgnoreCase(layout.getParam1())
-                                && !layoutParam.equalsIgnoreCase(layout.getParam2())) {
-                            AppUtils.crash("You have entered wrong layout parameter.");
-                        }
-                    }
-                }
-            }
-        }
-        Iterator<Map.Entry<String, String>> iter = getParams().entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, String> paramCouple = iter.next();
-            if (paramCouple.getKey().equals("threshold")) {
-                try {
-                    Level.toLevel(paramCouple.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
-                } catch (IllegalArgumentException ex) {
-                    AppUtils.crash("You have entered wrong threshold for appender" + getName());
-                }
-            } else {
-                try {
-                    boolean paramFound = false;
-                    for (String param : AppenderParams.valueOf(getName()).getParams()) {
-                        if (param.equalsIgnoreCase(paramCouple.getKey())) {
-                            paramFound = true;
-                            break;
-                        } 
-                    }
-                    if(!paramFound) {
-                        AppUtils.crash("You have entered wrong parameter \""
-                                + paramCouple.getKey() + "\" for appender: " + getName());
-                    }
-                } catch (IllegalArgumentException ex) {
-                    // custom defined appender: possible & it can have any parameter
-                    if(!loggedAlready) {
-                        //log.info("Custom appender: " + getName());
-                    }
-                    loggedAlready = true;
-                }
-            }
-        }
-        // + verify correctness of some values for defined parameters
-    }
+    private class ErrorHandler {
+        private String className;
+        private Map<String, String> params = new HashMap<String, String>();
+        private List<String> loggers = new ArrayList<String>();
+        private String root;
+        private String appender;
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 31 * hash + (this.className != null ? this.className.hashCode() : 0);
-        hash = 31 * hash + (this.layoutClassName != null ? this.layoutClassName.hashCode() : 0);
-        hash = 31 * hash + (this.hasLayoutAlready ? 1 : 0);
-        hash = 31 * hash + (this.threshold != null ? this.threshold.hashCode() : 0);
-        hash = 31 * hash + (this.params != null ? this.params.hashCode() : 0);
-        hash = 31 * hash + (this.layoutParams != null ? this.layoutParams.hashCode() : 0);
-        hash = 31 * hash + (this.errorHandler != null ? this.errorHandler.hashCode() : 0);
-        hash = 31 * hash + (this.appenderRefs != null ? this.appenderRefs.hashCode() : 0);
-        return hash;
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
+
+        public Map<String, String> getParams() {
+            return params;
+        }
+
+        public void addParam(String key, String value) {
+            if(params.get(key) == null){
+               params.put(key, value);
+            }else{
+                AppUtils.crash("ErrorHandler: '" + className + "' with two same params: " + key);
+            }
+        }
+
+        public List<String> getLoggers() {
+            return loggers;
+        }
+
+        public void addLogger(String logger) {
+            if(!loggers.contains(logger)){
+                loggers.add(logger);
+            }else{
+                AppUtils.crash("Two same logger-ref:'" + logger + "' in ErrorHanfler: " + className);
+            }
+        }
+
+        public String getRoot() {
+            return root;
+        }
+
+        public void setRoot(String root) {
+            this.root = root;
+        }
+
+        public String getAppender() {
+            return appender;
+        }
+
+        public void setAppender(String appender) {
+            this.appender = appender;
+        }
+
+        public void setUpFromElement(Element element){
+            className = element.attributeValue("class");
+
+            for(Element e : (List<Element>) element.elements("param")){
+                addParam(e.attributeValue("name"), e.attributeValue("value"));
+            }
+
+            if(element.element("root-ref") != null){
+                    root = element.element("root-ref").attributeValue("ref");
+            }
+
+            for(Element e : (List<Element>) element.elements("logger-ref")){
+                addLogger(e.attributeValue("ref"));
+            }
+
+            if(element.element("appender-ref") != null){
+                    appender = element.element("appender-ref").attributeValue("ref");
+            }
+
+        }
+
+        public List<String> toProperty(List<String> prop, String prefix) {
+            prop.add(AppUtils.prefix(prefix + ".errorhandler = " + className));
+            AppUtils.addParams(prop, prefix + ".errorhandler", params);
+
+            //logger refs
+            if(loggers.size() != 0) {
+                String loggerRefs = AppUtils.join( loggers, ", ");
+                prop.add(AppUtils.prefix(prefix + ".errorhandler.logger-ref = " + loggerRefs));
+            }
+
+            if(appender != null) {
+                prop.add(AppUtils.prefix(prefix + ".errorhandler.appender-ref = " + appender));
+            }
+
+            return prop;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 23 * hash + (this.className != null ? this.className.hashCode() : 0);
+            hash = 23 * hash + (this.params != null ? this.params.hashCode() : 0);
+            hash = 23 * hash + (this.loggers != null ? this.loggers.hashCode() : 0);
+            hash = 23 * hash + (this.root != null ? this.root.hashCode() : 0);
+            hash = 23 * hash + (this.appender != null ? this.appender.hashCode() : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ErrorHandler other = (ErrorHandler) obj;
+            if ((this.className == null) ? (other.className != null) : !this.className.equals(other.className)) {
+                return false;
+            }
+            if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+                return false;
+            }
+            if (this.loggers != other.loggers && (this.loggers == null || !this.loggers.equals(other.loggers))) {
+                return false;
+            }
+            if ((this.root == null) ? (other.root != null) : !this.root.equals(other.root)) {
+                return false;
+            }
+            if ((this.appender == null) ? (other.appender != null) : !this.appender.equals(other.appender)) {
+                return false;
+            }
+            return true;
+        }
     }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Appender other = (Appender) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if ((this.className == null) ? (other.className != null) : !this.className.equals(other.className)) {
-            return false;
-        }
-        if ((this.layoutClassName == null) ? (other.layoutClassName != null) : !this.layoutClassName.equals(other.layoutClassName)) {
-            return false;
-        }
-        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
-            return false;
-        }
-        if (this.layoutParams != other.layoutParams && (this.layoutParams == null || !this.layoutParams.equals(other.layoutParams))) {
-            return false;
-        }
-        if (this.errorHandler != other.errorHandler && (this.errorHandler == null || !this.errorHandler.equals(other.errorHandler))) {
-            return false;
-        }
-        if (this.appenderRefs != other.appenderRefs && (this.appenderRefs == null || !this.appenderRefs.equals(other.appenderRefs))) {
-            return false;
-        }
-        return true;
-    }
-    
 }

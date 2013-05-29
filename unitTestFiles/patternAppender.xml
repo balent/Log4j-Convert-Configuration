@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <appender name="fileAPPENDER" class="org.apache.log4j.FileAppender">
+	<errorHandler class="org.apache.BestHandler">
+		<logger-ref ref="odkazNaLoger" />
+		<appender-ref ref="FallbackServerAppender" />
+	</errorHandler>
 	<param name="File" value="/tmp/debug.log" />
 	<param name="Append" value="false" />
 	<param name="Encoding" value="UTF-8"/> 
