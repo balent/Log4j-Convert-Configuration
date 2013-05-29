@@ -174,7 +174,6 @@ public class Appender {
         }
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
-            System.out.println("XXX " + e.attributeValue("ref"));
             addAppenderRef(e.attributeValue("ref"));
         }
     }

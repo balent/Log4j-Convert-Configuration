@@ -102,10 +102,15 @@ public class ErrorHandler {
         AppUtils.addParams(prop, prefix + ".errorHandler", params);
 
         //logger refs
-        String loggerRefs = AppUtils.join( loggers, ", ");
-        prop.add(AppUtils.prefix(prefix + ".errorHandler.logger-ref = " + loggerRefs));
-
-        prop.add(AppUtils.prefix(prefix + ".errorHandler.appender-ref = " + appender));
+        if(loggers.size() != 0) {
+            String loggerRefs = AppUtils.join( loggers, ", ");
+            prop.add(AppUtils.prefix(prefix + ".errorHandler.logger-ref = " + loggerRefs));
+        }
+        
+        if(appender != null) {
+            prop.add(AppUtils.prefix(prefix + ".errorHandler.appender-ref = " + appender));
+        }
+        
         
         return prop;
         }

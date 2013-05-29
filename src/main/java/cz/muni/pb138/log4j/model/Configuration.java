@@ -210,8 +210,11 @@ public class Configuration {
         List<String> prop = new ArrayList<String>();
         
         //root element at first   
-        if(rootLogger != null) {
-            rootLogger.toProperty(prop);
+        
+        for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
+            if(logger.isRootLogger()){
+                logger.toProperty(prop);
+            }
         }
               
         //loggers
