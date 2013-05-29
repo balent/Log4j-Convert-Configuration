@@ -175,7 +175,10 @@ public class Configuration {
     }
 
     public void verify() {
-        // verify loggers - TODO
+        // verify loggers
+        for (Logger logger : loggers.values()) {
+            logger.verify();
+        }
 
         // verify appenders + layouts
         for (Appender appender : appenders.values()) {

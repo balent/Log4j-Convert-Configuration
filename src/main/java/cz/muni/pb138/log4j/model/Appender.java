@@ -342,7 +342,7 @@ public class Appender {
                 } catch (IllegalArgumentException ex) {
                     // custom defined appender: possible & it can have any parameter
                     if(!loggedAlready) {
-                        log.info("Custom appender: " + getName());
+                        //log.info("Custom appender: " + getName());
                     }
                     loggedAlready = true;
                 }
