@@ -66,7 +66,6 @@ public class Logger {
     
     public void addParam(String key, String value){
         if(params.get(key) == null){
-            checkLoggerParamSuported(key);
             params.put(key, value);
         }else{
             AppUtils.crash("Logger: '" + name + "' with two same params: " + key);
@@ -157,10 +156,7 @@ public class Logger {
             addAppenderName(e.attributeValue("ref"));
         }
     }
-    
-    private void checkLoggerParamSuported(String param){
-        // to do
-    }
+
     
     
     public List<String> toProperty(List<String> prop) {
@@ -221,7 +217,7 @@ public class Logger {
     
     public void verify() {
             if(additivity != null) {
-                if(additivity != "true" && additivity != "false") {
+                if(!additivity.equals("true") && !additivity.equals("false")) {
                     AppUtils.crash("Aditivity must be boolen");
                 }
             }
