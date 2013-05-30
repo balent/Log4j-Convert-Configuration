@@ -47,7 +47,7 @@ public class ConfigurationTest {
         renderer.setRenderingClass("renderingClass");
         patternConfigurationXML.addRenderer(renderer);
         
-        /*ThrowableRenderer throwRend = new ThrowableRenderer();
+        ThrowableRenderer throwRend = new ThrowableRenderer();
         throwRend.setClassName("THROW");
         throwRend.addParam("CATCH","false");
         patternConfigurationXML.setThrowableRenderer(throwRend);
@@ -90,29 +90,43 @@ public class ConfigurationTest {
         logs.add("ehlog-link");
         Map<String, String> pars = new HashMap<String, String>();
         pars.put("ehparam","ehvalue");
-        appender.setErrorHandler(appender.createErrorHandler("ErrorHandler", pars, logs, "true", "ehapp-link"));
-        patternConfigurationXML.addAppender(appender);    */   
+        appender.setErrorHandler(appender.createErrorHandler("ErrorHandler", pars, logs, "ehapp-link"));
+        patternConfigurationXML.addAppender(appender);       
         
         
         patternConfigurationProp = new ArrayList<String>();
-        patternConfigurationProp.add("");
-        patternConfigurationProp.add("");
         patternConfigurationProp.add("log4j.threshold = fatal");
         patternConfigurationProp.add("log4j.reset = false");
         patternConfigurationProp.add("log4j.debug = true");
+        
         patternConfigurationProp.add("log4j.renderer.classToBeRendered = renderingClass");
         
-        /*patternConfigurationProp.add("log4j.appender.fileAPPENDER.errorHandler = org.apache.BestHandler");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.errorHandler.logger-ref = odkazNaLoger");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.errorHandler.appender-ref = FallbackServerConfiguration");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.layout = org.apache.log4j.PatternLayout");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.layout.ConversionPattern = %d{HH:mm:ss}");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.File = /tmp/debug.log");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.Append = false");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.Encoding = UTF-8");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.BufferSize = 1024");
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.Threshold = WARN");                
-        patternConfigurationProp.add("log4j.appender.fileAPPENDER.appender-ref = unknownConfiguration");*/
+        patternConfigurationProp.add("log4j.throwableRenderer = THROW");
+        patternConfigurationProp.add("log4j.throwableRenderer.CATCH = false");
+        
+        patternConfigurationProp.add("log4j.loggerFactory = SimpleFactoryClass");
+        patternConfigurationProp.add("log4j.loggerFactory.factparam = factvalue");
+        
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER = FileAppender");
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.errorHandler = ErrorHandler");
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.errorHandler.ehparam = ehvalue");        
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.errorHandler.logger-ref = ehlog-link");
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.errorHandler.appender-ref = ehapp-link");
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.layout = AppenderLayout");
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.layout.layparam = layvalue");
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.appparam = appvalue");         
+        patternConfigurationProp.add("log4j.appender.FILEAPPENDER.appender-ref = app-link");
+        
+        patternConfigurationProp.add("log4j.logger.LOGGER = INFO#LogLevelClass, logapp-link");
+        patternConfigurationProp.add("log4j.logger.LOGGER.level.loglevparam = loglevvalue");        
+        patternConfigurationProp.add("log4j.additivity.LOGGER = true");
+        patternConfigurationProp.add("log4j.logger.LOGGER.logparam = logvalue");
+        patternConfigurationProp.add("log4j.logger.LOGGER.class = StandardLogger");
+
+        
+        patternConfigurationProp.add("log4j.rootLogger = WARN#RootLevelClass, rootapp-link");
+        patternConfigurationProp.add("log4j.rootLogger.level.rootlevparam = rootlevvalue");        
+        patternConfigurationProp.add("log4j.rootLogger.rootparam = rootvalue");
     }
     
     @Test
@@ -142,6 +156,12 @@ public class ConfigurationTest {
                
         Collections.sort(ourOutput);
         Collections.sort(patternConfigurationProp);
+        
+        for(int i = 0; i<25; i++){
+            System.out.println(ourOutput.get(i) + "|");
+            System.out.println(patternConfigurationProp.get(i)+"|");
+        }
+        
         assertEquals(ourOutput.size(), patternConfigurationProp.size());
         assertEquals(ourOutput, patternConfigurationProp);
     }

@@ -56,6 +56,10 @@ public class Logger {
         this.name = name;
     }
 
+    public Map<String, String> getParams() {
+        return params;
+    }
+
     public List<String> getAppenderNames() {
         return appenderNames;
     }
@@ -217,6 +221,21 @@ public class Logger {
         //root
         if(isRootLogger()) {            
             prop.add(AppUtils.prefix("rootLogger") + " = " + value);
+            
+            //params
+            AppUtils.addParams(prop, "rootLogger", params);
+
+            //custom class
+            if(customClass !=null && !customClass.isEmpty()) {
+                prop.add(AppUtils.prefix("rootLogger.class = "+customClass));
+            }
+
+            //level
+            if(loggerLevel != null) {
+                for (Map.Entry<String, String> entry : loggerLevel.getParams().entrySet()) {
+                    prop.add(AppUtils.prefix("rootLogger.level." + entry.getKey() + " = "+entry.getValue()));
+                }
+            }
         }
         //anoteher logger
         else {
@@ -225,21 +244,22 @@ public class Logger {
                 prop.add(AppUtils.prefix("additivity." + name) + " = " + additivity);
             }
             
-        }
-        //params
-        AppUtils.addParams(prop, "logger." + name, params);
-        
-        //custom class
-        if(customClass !=null && !customClass.isEmpty()) {
-            prop.add(AppUtils.prefix("logger." + name + ".class = "+customClass));
-        }
-        
-        //level
-        if(loggerLevel != null) {
-            for (Map.Entry<String, String> entry : loggerLevel.getParams().entrySet()) {
-                prop.add(AppUtils.prefix("logger.level." + entry.getKey() + " = "+entry.getValue()));
+            //params
+            AppUtils.addParams(prop, "logger." + name, params);
+
+            //custom class
+            if(customClass !=null && !customClass.isEmpty()) {
+                prop.add(AppUtils.prefix("logger." + name + ".class = "+customClass));
+            }
+
+            //level
+            if(loggerLevel != null) {
+                for (Map.Entry<String, String> entry : loggerLevel.getParams().entrySet()) {
+                    prop.add(AppUtils.prefix("logger."+ name +".level." + entry.getKey() + " = "+entry.getValue()));
+                }
             }
         }
+        
         
         
         return prop;

@@ -31,7 +31,6 @@ public class Appender {
             String className,
             Map<String, String> params,
             List<String> loggers,
-            String root,
             String appender){
         
         ErrorHandler e = new ErrorHandler();
@@ -43,7 +42,7 @@ public class Appender {
         if(loggers != null){
             for(String s : loggers) e.addLogger(s);
         }
-        e.setRoot(root);
+      
         e.setAppender(appender);
         return e;
     }
@@ -467,7 +466,6 @@ public class Appender {
         private String className;
         private Map<String, String> params = new HashMap<String, String>();
         private List<String> loggers = new ArrayList<String>();
-        private String root;
         private String appender;
 
         public String getClassName() {
@@ -502,14 +500,6 @@ public class Appender {
             }
         }
 
-        public String getRoot() {
-            return root;
-        }
-
-        public void setRoot(String root) {
-            this.root = root;
-        }
-
         public String getAppender() {
             return appender;
         }
@@ -523,10 +513,6 @@ public class Appender {
 
             for(Element e : (List<Element>) element.elements("param")){
                 addParam(e.attributeValue("name"), e.attributeValue("value"));
-            }
-
-            if(element.element("root-ref") != null){
-                    root = "true";
             }
 
             for(Element e : (List<Element>) element.elements("logger-ref")){
@@ -562,7 +548,6 @@ public class Appender {
             hash = 23 * hash + (this.className != null ? this.className.hashCode() : 0);
             hash = 23 * hash + (this.params != null ? this.params.hashCode() : 0);
             hash = 23 * hash + (this.loggers != null ? this.loggers.hashCode() : 0);
-            hash = 23 * hash + (this.root != null ? this.root.hashCode() : 0);
             hash = 23 * hash + (this.appender != null ? this.appender.hashCode() : 0);
             return hash;
         }
@@ -583,9 +568,6 @@ public class Appender {
                 return false;
             }
             if (this.loggers != other.loggers && (this.loggers == null || !this.loggers.equals(other.loggers))) {
-                return false;
-            }
-            if ((this.root == null) ? (other.root != null) : !this.root.equals(other.root)) {
                 return false;
             }
             if ((this.appender == null) ? (other.appender != null) : !this.appender.equals(other.appender)) {

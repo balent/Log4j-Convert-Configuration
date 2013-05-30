@@ -11,7 +11,6 @@
 	<appender name="FILEAPPENDER" class="FileAppender">
 		<errorHandler class="ErrorHandler">
 			<param name="ehparam" value="ehvalue"/>
-			<root-ref/>
 			<logger-ref ref="ehlog-link"/>
 			<appender-ref ref="ehapp-link"/>
 		</errorHandler>

@@ -52,6 +52,8 @@ public class LoggerTest {
         
         l.setRootLogger(isRoot);
         
+        l.setCustomClass(custClass);
+        
         return l;
     }
     

@@ -36,7 +36,7 @@ public class AppenderTest {
         patternAppenderXML.setName("fileAPPENDER");
         List<String> logs = new ArrayList<String>();
         logs.add("odkazNaLoger");
-        patternAppenderXML.setErrorHandler(patternAppenderXML.createErrorHandler("org.apache.BestHandler", null, logs, null, "FallbackServerAppender"));
+        patternAppenderXML.setErrorHandler(patternAppenderXML.createErrorHandler("org.apache.BestHandler", null, logs, "FallbackServerAppender"));
         patternAppenderXML.setClassName("org.apache.log4j.FileAppender");
         patternAppenderXML.setLayoutClassName("org.apache.log4j.PatternLayout");
         patternAppenderXML.addParam("File", "/tmp/debug.log");
