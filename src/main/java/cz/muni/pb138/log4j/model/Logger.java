@@ -24,6 +24,14 @@ public class Logger {
     private String level; //deprecated
     private LoggerLevel loggerLevel;
     private String customClass = "";
+
+    public String getCustomClass() {
+        return customClass;
+    }
+
+    public void setCustomClass(String customClass) {
+        this.customClass = customClass;
+    }
     private boolean isRootLogger = false;
 
     public String getName() {
