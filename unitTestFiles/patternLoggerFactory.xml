@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<loggerFactory class="com.my.log.MyLoggerFactory">
+        <param name="messageBundle" value="MyLoggerBundle"/>
+	<param name="xyz" value="XYZ" />
+</loggerFactory>

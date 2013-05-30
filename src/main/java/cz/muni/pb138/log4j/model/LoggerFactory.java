@@ -22,8 +22,12 @@ public class LoggerFactory {
         if(params.get(key) == null){
             params.put(key, value);
         }else{
-            AppUtils.crash("ConnectionSource: '" + className + "' with two same params: " + key);
+            AppUtils.crash("LoggerFactory: '" + className + "' with two same params: " + key);
         }
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
     
     public void setUpFromElement(Element element){
@@ -43,4 +47,31 @@ public class LoggerFactory {
         
         return prop;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 73 * hash + (this.className != null ? this.className.hashCode() : 0);
+        hash = 73 * hash + (this.params != null ? this.params.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LoggerFactory other = (LoggerFactory) obj;
+        if ((this.className == null) ? (other.className != null) : !this.className.equals(other.className)) {
+            return false;
+        }
+        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+            return false;
+        }
+        return true;
+    }
+    
 }
