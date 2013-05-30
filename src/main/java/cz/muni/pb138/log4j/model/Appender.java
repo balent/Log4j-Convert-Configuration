@@ -491,17 +491,17 @@ public class Appender {
         }
 
         public List<String> toProperty(List<String> prop, String prefix) {
-            prop.add(AppUtils.prefix(prefix + ".errorhandler = " + className));
-            AppUtils.addParams(prop, prefix + ".errorhandler", params);
+            prop.add(AppUtils.prefix(prefix + ".errorHandler = " + className));
+            AppUtils.addParams(prop, prefix + ".errorHandler", params);
 
             //logger refs
             if(loggers.size() != 0) {
                 String loggerRefs = AppUtils.join( loggers, ", ");
-                prop.add(AppUtils.prefix(prefix + ".errorhandler.logger-ref = " + loggerRefs));
+                prop.add(AppUtils.prefix(prefix + ".errorHandler.logger-ref = " + loggerRefs));
             }
 
             if(appender != null) {
-                prop.add(AppUtils.prefix(prefix + ".errorhandler.appender-ref = " + appender));
+                prop.add(AppUtils.prefix(prefix + ".errorHandler.appender-ref = " + appender));
             }
 
             return prop;

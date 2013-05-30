@@ -25,6 +25,10 @@ public class ThrowableRenderer {
             AppUtils.crash("ThrowableRenderer: '" + className + "' with two same params: " + key);
         }
     }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
     
     public void setUpFromElement(Element element){
         className = element.attributeValue("class");
@@ -42,6 +46,29 @@ public class ThrowableRenderer {
         AppUtils.addParams(prop, prefix + "throwableRenderer", params);
         
         return prop;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + (this.className != null ? this.className.hashCode() : 0);
+        hash = 11 * hash + (this.params != null ? this.params.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ThrowableRenderer other = (ThrowableRenderer) obj;
+        if (this.params != other.params && (this.params == null || !this.params.equals(other.params))) {
+            return false;
+        }
+        return true;
     }
     
 }

@@ -49,9 +49,9 @@ public class AppenderTest {
         patternAppenderProp = new ArrayList<String>();
         patternAppenderProp.add("");
         patternAppenderProp.add("log4j.appender.fileAPPENDER = org.apache.log4j.FileAppender");
-        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorhandler = org.apache.BestHandler");
-        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorhandler.logger-ref = odkazNaLoger");
-        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorhandler.appender-ref = FallbackServerAppender");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorHandler = org.apache.BestHandler");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorHandler.logger-ref = odkazNaLoger");
+        patternAppenderProp.add("log4j.appender.fileAPPENDER.errorHandler.appender-ref = FallbackServerAppender");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.layout = org.apache.log4j.PatternLayout");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.layout.ConversionPattern = %d{HH:mm:ss}");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.File = /tmp/debug.log");

@@ -37,6 +37,7 @@ public class LoggerFactory {
     public List<String> toProperty(List<String> prop, String prefix) {
         prefix = (prefix != "") ? prefix + "." : prefix;
         
+        prop.add("");
         prop.add(AppUtils.prefix(prefix + "loggerFactory = " + className));
         AppUtils.addParams(prop, prefix + "loggerFactory", params);
         
