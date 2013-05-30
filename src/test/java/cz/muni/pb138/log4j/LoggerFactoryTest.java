@@ -21,7 +21,8 @@ import org.junit.Test;
  * @author jozef
  */
 public class LoggerFactoryTest {
-    private LoggerFactory patternLoggerFactoryXML;
+    private LoggerFactory patternLoggerFactoryXML;    
+    private LoggerFactory testLoggerFactory;
     private List<String> patternLoggerFactoryProp;
     
     @Before
@@ -66,5 +67,27 @@ public class LoggerFactoryTest {
         Collections.sort(patternLoggerFactoryProp);
         assertEquals(ourOutput.size(), patternLoggerFactoryProp.size());
         assertEquals(ourOutput, patternLoggerFactoryProp);
+    }
+    
+    @Test
+    public void verifyTest() {
+        testLoggerFactory = new LoggerFactory();
+        testLoggerFactory.verify();
+        
+        testLoggerFactory.setClassName("com.my.log.MyLoggerFactory ");
+        try {
+            testLoggerFactory.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        testLoggerFactory.setClassName("com.my.log.MyLoggerFactory");
+        testLoggerFactory.addParam("messageBundle ", "MyLoggerBundle");
+        try {
+            testLoggerFactory.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
     }
 }

@@ -24,6 +24,14 @@ public class Logger {
     private String level; //deprecated
     private LoggerLevel loggerLevel;
     private String customClass = "";
+
+    public String getCustomClass() {
+        return customClass;
+    }
+
+    public void setCustomClass(String customClass) {
+        this.customClass = customClass;
+    }
     private boolean isRootLogger = false;
 
     public LoggerLevel CreateLoggerLevel(String level, Map<String, String> params, String levClass){
@@ -240,6 +248,10 @@ public class Logger {
     }
     
     public void verify() {
+            if(!AppUtils.testParams(params)) {
+                AppUtils.crash("Param's name or value contains a space. Logger: " + name);
+            }
+        
             if(additivity != null) {
                 if(!additivity.equals("true") && !additivity.equals("false")) {
                     AppUtils.crash("Aditivity must be boolen");

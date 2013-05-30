@@ -184,8 +184,28 @@ public class Configuration {
         for (Appender appender : appenders.values()) {
             appender.verify();
         }
-
-        // verify other object structure - TODO
+        
+        //renderers
+        for (Renderer renderer : renderers.values()) {
+            renderer.verify();
+        }
+        
+        if(throwableRenderer != null) {
+            throwableRenderer.verify();
+        }
+        
+        if(loggerFactory != null) {
+            loggerFactory.verify();
+        }
+        
+        if(rootLogger != null) {
+            rootLogger.verify();
+        }
+        
+        
+        if( wideThreshold != null && wideThreshold.contains(" ")) {
+            AppUtils.crash("Wide treshold contains a space");
+        }
     }
 
     public Document toXML() {

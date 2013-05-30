@@ -22,6 +22,7 @@ import org.junit.Test;
  */
 public class RendererTest {
     private Renderer patternRendererXML;
+    private Renderer testRenderer;
     private List<String> patternRendererProp;
     
     @Before
@@ -63,5 +64,31 @@ public class RendererTest {
         Collections.sort(patternRendererProp);
         assertEquals(ourOutput.size(), patternRendererProp.size());
         assertEquals(ourOutput, patternRendererProp);
+    }
+    
+    @Test
+    public void verifyTest() {
+        testRenderer = new Renderer();
+        testRenderer.verify();
+        
+        testRenderer.setRenderedClass("cz.muni.fi.ThrowableRendererImpl ");
+        try {
+            testRenderer.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testRenderer.setRenderedClass("cz.muni.fi.ThrowableRendererImpl");
+        testRenderer.setRenderingClass("cz.muni.fi.ThrowableRendererImpl ");
+        try {
+            testRenderer.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testRenderer.setRenderingClass("cz.muni.fi.ThrowableRendererImpl");
+        testRenderer.verify();
     }
 }

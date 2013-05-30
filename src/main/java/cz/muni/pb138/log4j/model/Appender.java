@@ -273,52 +273,88 @@ public class Appender {
         return prop;
     }
     
+    private boolean checkStandardLayoutName(String name){        
+        for (Layout layout : Layout.values()) {
+            if (name.equalsIgnoreCase(layout.getFullName())) {
+                return true;
+            }
+        }            
+        return false;        
+    }
+    
+    private boolean checkStandardLayoutParam(String name,String param){
+        for (Layout layout : Layout.values()) {
+            if (name.equalsIgnoreCase(layout.getFullName())) {
+                
+                if (param.equalsIgnoreCase(layout.getParam1()) || param.equalsIgnoreCase(layout.getParam2())) {
+                    return true;
+                }
+                
+            }
+        }            
+        return false;     
+    }
+    
     public void verify() {
-        boolean loggedAlready = false;
+        //name contains a space
+        if(name.contains(" ")) { 
+                AppUtils.crash("Appender name " + name + " contanins a space");
+        }
+        
         // verify layouts
-        if (getLayoutClassName() != null) {     // there is a layout present
-            for (Layout layout : Layout.values()) {
-                if (getLayoutClassName().equalsIgnoreCase(layout.toString())) {
-                    for (String layoutParam : getLayoutParams().keySet()) {
-                        if (!layoutParam.equalsIgnoreCase(layout.getParam1())
-                                && !layoutParam.equalsIgnoreCase(layout.getParam2())) {
-                            AppUtils.crash("You have entered wrong layout parameter.");
-                        }
-                    }
+        if(layoutClassName != null) {
+            //containing space
+            if(layoutClassName.contains(" ")) { 
+                AppUtils.crash("Appender's class name " + name + " contanins a space - layoutClassName: "+layoutClassName);
+            }
+            
+            //checking name
+            if(!checkStandardLayoutName(layoutClassName)) {
+                AppUtils.crash("You have entered wrong layout class name. Layout class name was " + layoutClassName);
+            }
+            
+            //checking params            
+            for (String layoutParam : layoutParams.keySet()) {
+                if(!checkStandardLayoutParam(layoutClassName,layoutParam)) {
+                    AppUtils.crash("You have entered wrong layout paral. Layout param was " + layoutParam);
+                }             
+            }            
+        }
+        
+        //verify params
+        if(!AppUtils.testParams(params)) {
+            AppUtils.crash("Param's name or value contains a space. Appender: " + name);
+        }
+        
+        for (Map.Entry<String, String> param : params.entrySet()) {
+            
+            //threshold
+            if(param.getKey().equals("threshold")) {
+                try {
+                    Level.toLevel(param.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
+                } catch (IllegalArgumentException ex) {
+                    AppUtils.crash("You have entered wrong threshold for appender " + name);
                 }
             }
-        }
-        Iterator<Map.Entry<String, String>> iter = getParams().entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, String> paramCouple = iter.next();
-            if (paramCouple.getKey().equals("threshold")) {
-                try {
-                    Level.toLevel(paramCouple.getValue()); // FOR MARTIN: Nahrada za Threshold.valueOf(paramCouple.getValue())
-                } catch (IllegalArgumentException ex) {
-                    AppUtils.crash("You have entered wrong threshold for appender" + getName());
-                }
-            } else {
+            else {
+                //another params
                 try {
                     boolean paramFound = false;
-                    for (String param : AppenderParams.valueOf(getName()).getParams()) {
-                        if (param.equalsIgnoreCase(paramCouple.getKey())) {
+                    for (String paramName : AppenderParams.valueOf(name).getParams()) {
+                        if (paramName.equalsIgnoreCase(param.getKey())) {
                             paramFound = true;
                             break;
                         } 
                     }
                     if(!paramFound) {
-                        AppUtils.crash("You have entered wrong parameter \""
-                                + paramCouple.getKey() + "\" for appender: " + getName());
+                        AppUtils.crash("You have entered wrong parameter " + param.getKey() + " for appender: " + name);
                     }
                 } catch (IllegalArgumentException ex) {
                     // custom defined appender: possible & it can have any parameter
-                    if(!loggedAlready) {
-                        //log.info("Custom appender: " + getName());
-                    }
-                    loggedAlready = true;
                 }
             }
         }
+
         // + verify correctness of some values for defined parameters
     }
     
@@ -416,6 +452,10 @@ public class Appender {
 
         public String getParam2() {
             return param2;
+        }
+
+        public String getFullName() {
+            return fullName;
         }
 
         @Override

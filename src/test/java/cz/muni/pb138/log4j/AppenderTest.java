@@ -27,6 +27,7 @@ import org.junit.Test;
  */
 public class AppenderTest {
     private Appender patternAppenderXML;
+    private Appender testAppender;
     private List<String> patternAppenderProp;
 
     @Before
@@ -92,4 +93,74 @@ public class AppenderTest {
         assertEquals(ourOutput.size(), patternAppenderProp.size());
         assertEquals(ourOutput, patternAppenderProp);
     }
+    
+    public void verifyTest() {
+        testAppender = new Appender();
+        
+        testAppender.verify();
+        
+        testAppender.setClassName("org.apache.log4j. FileAppender");
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testAppender.setClassName("org.apache.log4j.FileAAppender");
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testAppender.setClassName("org.apache.log4j.FileAppender");
+        testAppender.setName("fileAPPENDER ");
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+
+        testAppender.setName("fileAPPENDER");
+        testAppender.addParam("File", " /tmp/debug.log ");
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testAppender.addParam(" File", "/tmp/debug.log");
+        
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testAppender.addParam("File", "/tmp/debug.log");
+        testAppender.addParam("Threshold", "WARNING");
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testAppender.addParam("Threshold", "WARN");
+        try{
+            testAppender.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+    
+    }
+    
+    
 }

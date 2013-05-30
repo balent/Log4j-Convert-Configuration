@@ -26,6 +26,7 @@ import org.junit.Test;
  */
 public class LoggerTest {
     private Logger patternLoggerXML;
+    private Logger testLogger;
     private List<String> patternLoggerProp;
 
     public static Logger CreateLogger(
@@ -101,5 +102,55 @@ public class LoggerTest {
         Collections.sort(patternLoggerProp);
         assertEquals(ourOutput.size(), patternLoggerProp.size());
         assertEquals(ourOutput, patternLoggerProp);
+    }
+    
+    @Test
+    public void verifyTest() {
+        /*testLogger = new Logger();
+        
+        testLogger.setAdditivity("not-false");
+        try{
+            testLogger.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        
+        //class name and name with space
+        testLogger.setAdditivity("false");         
+        testLogger.setName("com. google. name");
+        try{
+            testLogger.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testLogger.setName("com. google.name");
+        testLogger.setCustomClass("com. google. name");
+        try{
+            testLogger.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        } 
+        testLogger.setCustomClass("com.google.name");
+        
+        testLogger.setLoggerLevel("WARNING");
+        try{
+            testLogger.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        testLogger.setLoggerLevel("WARN");
+        testLogger.addAppenderName("appendJedna s");
+        try{
+            testLogger.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        } */
     }
 }

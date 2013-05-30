@@ -3,6 +3,7 @@ package cz.muni.pb138.log4j;
 import cz.muni.pb138.log4j.model.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,8 @@ public class XmlToPropsConverter implements Converter {
     private static Logger log = Logger.getLogger(XmlToPropsConverter.class);
     private Configuration configuration;
     
-    public void convert(File sourceFile, File outputFile) throws IOException {
+
+    public void convert(File sourceFile, File outputFile) throws FileNotFoundException, UnsupportedEncodingException, IOException{
         FileInputStream fis = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(outputFile);
         
