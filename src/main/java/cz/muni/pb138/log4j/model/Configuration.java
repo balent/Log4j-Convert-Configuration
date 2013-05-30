@@ -209,7 +209,7 @@ public class Configuration {
         return document;
     }
     
-    public List<String> toProperties(){        
+    public List<String> toProperty(){        
         List<String> prop = new ArrayList<String>();
         
         //root element at first   
@@ -241,7 +241,7 @@ public class Configuration {
         //another params
   
         if(threshold != null) {
-            prop.add(AppUtils.prefix("threshold = " + threshold));
+            prop.add(AppUtils.prefix("threshold = " + threshold.toString().toLowerCase()));
         }
         if(debug != null) {
             prop.add(AppUtils.prefix("debug = " + debug));
@@ -327,5 +327,50 @@ public class Configuration {
             rootLogger.setUpFromElement(rootElement.element("root"));
             addLogger(rootLogger);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Configuration other = (Configuration) obj;
+        if (this.renderers != other.renderers && (this.renderers == null || !this.renderers.equals(other.renderers))) {
+            return false;
+        }
+        if (this.loggers != other.loggers && (this.loggers == null || !this.loggers.equals(other.loggers))) {
+            return false;
+        }
+        if (this.appenders != other.appenders && (this.appenders == null || !this.appenders.equals(other.appenders))) {
+            return false;
+        }
+        if (this.threshold != other.threshold && (this.threshold == null || !this.threshold.equals(other.threshold))) {
+            return false;
+        }
+        if (this.debug != other.debug && (this.debug == null || !this.debug.equals(other.debug))) {
+            return false;
+        }
+        if (this.reset != other.reset && (this.reset == null || !this.reset.equals(other.reset))) {
+            return false;
+        }
+        if ((this.wideThreshold == null) ? (other.wideThreshold != null) : !this.wideThreshold.equals(other.wideThreshold)) {
+            return false;
+        }
+        if (this.throwableRenderer != other.throwableRenderer && (this.throwableRenderer == null || !this.throwableRenderer.equals(other.throwableRenderer))) {
+            return false;
+        }
+        if (this.loggerFactory != other.loggerFactory && (this.loggerFactory == null || !this.loggerFactory.equals(other.loggerFactory))) {
+            return false;
+        }
+        return true;
     }
 }

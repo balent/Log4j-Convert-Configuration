@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" threshold="fatal" debug="true" reset="false">
+	<renderer renderedClass="classToBeRendered" renderingClass="renderingClass"/>
+
+	<throwableRenderer class="THROW">
+		<param name="CATCH" value="false"/>
+	</throwableRenderer>
+
+	<appender name="FILEAPPENDER" class="FileAppender">
+		<errorHandler class="ErrorHandler">
+			<param name="ehparam" value="ehvalue"/>
+			<root-ref/>
+			<logger-ref ref="ehlog-link"/>
+			<appender-ref ref="ehapp-link"/>
+		</errorHandler>
+		<param name="appparam" value="appvalue"/>
+
+		<layout class="AppenderLayout">
+			<param name="layparam" value="layvalue"/>
+		</layout>
+	
+		<appender-ref ref="app-link"/>
+	</appender>
+
+	<logger class="StandardLogger" name="LOGGER" additivity="true">
+		<param name="logparam" value="logvalue"/>
+		<level class="LogLevelClass" value="INFO">
+			<param name="loglevparam" value="loglevvalue"/>
+		</level>
+		<appender-ref ref="logapp-link"/>
+	</logger>
+
+	<root>
+		<param name="rootparam" value="rootvalue"/>
+		<level class="RootLevelClass" value="WARN">
+			<param name="rootlevparam" value="rootlevvalue"/>
+		</level>
+		<appender-ref ref="rootapp-link"/>
+	</root>
+
+	<loggerFactory class="SimpleFactoryClass">
+		<param name="factparam" value="factvalue"/>
+	</loggerFactory>
+</log4j:configuration>

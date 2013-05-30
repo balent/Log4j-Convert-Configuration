@@ -9,7 +9,10 @@ import static org.junit.Assert.*;
 import cz.muni.pb138.log4j.model.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.management.ImmutableDescriptor;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -24,16 +27,44 @@ import org.junit.Test;
 public class LoggerTest {
     private Logger patternLoggerXML;
     private List<String> patternLoggerProp;
+
+    public static Logger CreateLogger(
+            String name, 
+            Map<String, String> params, 
+            List<String> apps, 
+            String add, 
+            String custClass, 
+            boolean isRoot) {
+        
+        Logger l = new Logger();
+        l.setName(name);
+        
+        if(params != null){
+            for(Map.Entry<String, String> e : params.entrySet()) l.addParam(e.getKey(), e.getValue());
+        }
+        
+        if(apps != null) {
+            for(String a : apps) l.addAppenderName(a);
+        }
+        
+        l.setAdditivity(add);
+        
+        l.setRootLogger(isRoot);
+        
+        return l;
+    }
     
     @Before
     public void setUp() {
-        patternLoggerXML = new Logger();
-        patternLoggerXML.setName("com.google.name");
-        patternLoggerXML.addAppenderName("appendJedna");
-        patternLoggerXML.addAppenderName("appendDva");        
-        patternLoggerXML.setAdditivity("false");
-        patternLoggerXML.setLoggerLevel("WARN");
-        patternLoggerXML.addParam("DebugEnabled", "false");
+        
+        Map<String, String> params = new HashMap();
+        params.put("DebugEnabled", "false");
+        List<String> apps = new ArrayList<String>();
+        apps.add("appendJedna");
+        apps.add("appendDva");
+        patternLoggerXML = CreateLogger("com.google.name",params,apps,"false","",false);
+        patternLoggerXML.setLoggerLevel(patternLoggerXML.CreateLoggerLevel("WARN", null, ""));
+        
         
         patternLoggerProp = new ArrayList<String>();
         patternLoggerProp.add("");

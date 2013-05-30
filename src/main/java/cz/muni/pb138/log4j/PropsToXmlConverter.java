@@ -22,7 +22,7 @@ public class PropsToXmlConverter implements Converter {
 
     private static Logger log = Logger.getLogger(PropsToXmlConverter.class);
     
-    public void convert(File sourceFile, File outputFile) throws Exception {
+    public void convert(File sourceFile, File outputFile) throws IOException {
         FileInputStream fis = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(outputFile);
         

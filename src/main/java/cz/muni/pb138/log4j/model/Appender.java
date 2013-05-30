@@ -27,6 +27,27 @@ public class Appender {
     // nutne kôli (podla mna nepotrebnemu) logovaniu vo verify, martin by mohol povedat ci to nezmazeme
     private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Appender.class);
 
+    public ErrorHandler createErrorHandler(
+            String className,
+            Map<String, String> params,
+            List<String> loggers,
+            String root,
+            String appender){
+        
+        ErrorHandler e = new ErrorHandler();
+        
+        e.setClassName(className);
+        if(params != null){
+            for(Map.Entry<String, String> p : params.entrySet()) e.addParam(p.getKey(), p.getValue());
+        }
+        if(loggers != null){
+            for(String s : loggers) e.addLogger(s);
+        }
+        e.setRoot(root);
+        e.setAppender(appender);
+        return e;
+    }
+    
     public String getName() {
         return name;
     }
@@ -49,6 +70,10 @@ public class Appender {
 
     public void setLayoutClassName(String layoutClassName) {
         this.layoutClassName = layoutClassName;
+    }
+
+    public void setThreshold(String threshold) {
+        this.threshold = threshold;
     }
 
     public String getThreshold() {
@@ -91,21 +116,6 @@ public class Appender {
 
     public void setErrorHandler(ErrorHandler errHand) {
         errorHandler =  errHand;
-    }
-    
-    public void setErrorHandlerClassName(String errClassName) {
-        if(errorHandler == null) errorHandler = new ErrorHandler();
-        errorHandler.setClassName(errClassName);
-    }
-    
-    public void addErrorHandlerLoggerRef(String ref){
-        if(errorHandler == null) errorHandler = new ErrorHandler();
-        errorHandler.addLogger(ref);
-    }
-    
-    public void setErrorHandlerAppenderRef(String ref){
-        if(errorHandler == null) errorHandler = new ErrorHandler();
-        errorHandler.setAppender(ref);
     }
     
     public List<String> getAppenderRefs() {
@@ -477,7 +487,7 @@ public class Appender {
             }
 
             if(element.element("root-ref") != null){
-                    root = element.element("root-ref").attributeValue("ref");
+                    root = "true";
             }
 
             for(Element e : (List<Element>) element.elements("logger-ref")){

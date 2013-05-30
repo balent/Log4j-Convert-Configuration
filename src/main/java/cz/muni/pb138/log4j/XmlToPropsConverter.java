@@ -19,7 +19,7 @@ public class XmlToPropsConverter implements Converter {
     private static Logger log = Logger.getLogger(XmlToPropsConverter.class);
     private Configuration configuration;
     
-    public void convert(File sourceFile, File outputFile) throws Exception {
+    public void convert(File sourceFile, File outputFile) throws IOException {
         FileInputStream fis = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(outputFile);
         
@@ -45,7 +45,7 @@ public class XmlToPropsConverter implements Converter {
                 
         //writing out
         
-        List<String> prop = configuration.toProperties();
+        List<String> prop = configuration.toProperty();
         AppUtils.store(prop, outputStream);
     }
 }

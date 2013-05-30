@@ -26,6 +26,20 @@ public class Logger {
     private String customClass = "";
     private boolean isRootLogger = false;
 
+    public LoggerLevel CreateLoggerLevel(String level, Map<String, String> params, String levClass){
+        LoggerLevel l = new LoggerLevel();
+        
+        l.setLevel(level);
+        
+        if(params != null){
+            for(Map.Entry<String, String> e : params.entrySet()) l.addParam(e.getKey(), e.getValue());
+        }
+        
+        l.setLevelClass(levClass);
+        
+        return l;
+    }
+    
     public String getName() {
         return name;
     }
@@ -62,19 +76,8 @@ public class Logger {
         return loggerLevel;
     }
 
-    public void setLoggerLevel(String level) {
-        if(loggerLevel == null) loggerLevel = new LoggerLevel();
-        loggerLevel.setLevel(level);   
-    }
-    
-    public void setLoggerLevelClass(String levelClass) {
-        if(loggerLevel == null) loggerLevel = new LoggerLevel();
-        loggerLevel.setLevelClass(levelClass);   
-    }
-    
-    public void addLoggerLevelParam(String key, String val) {
-        if(loggerLevel == null) loggerLevel = new LoggerLevel();
-        loggerLevel.addParam(key, val); 
+    public void setLoggerLevel(LoggerLevel level) {
+        loggerLevel = level;
     }
 
     public boolean isRootLogger() {
