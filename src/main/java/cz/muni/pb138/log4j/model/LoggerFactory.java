@@ -47,6 +47,16 @@ public class LoggerFactory {
         
         return prop;
     }
+    
+    public void verify() {
+        if(className != null && className.contains(" ")) {
+            AppUtils.crash("Logger factory: " + className + " contains a space");
+        }
+        
+        if(!AppUtils.testParams(params)) {
+            AppUtils.crash("Param's name or value contains a space. Logger factory: " + className);
+        }
+    }
 
     @Override
     public int hashCode() {

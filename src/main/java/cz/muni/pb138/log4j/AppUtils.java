@@ -84,4 +84,17 @@ public class AppUtils {
         }
         return prop;
     }
+    
+    public static boolean testParams(Map<String,String> params) {
+        for (Map.Entry<String, String> param : params.entrySet()) {
+            //containing space
+            if(param.getKey() != null && param.getKey().contains(" ")) { 
+                return false;
+            }
+            if(param.getValue() != null && param.getValue().contains(" ")) { 
+                return false;
+            }
+        }
+        return true;
+    }
 }

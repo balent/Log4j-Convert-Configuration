@@ -312,14 +312,11 @@ public class Appender {
         }
         
         //verify params
+        if(!AppUtils.testParams(params)) {
+            AppUtils.crash("Param's name or value contains a space. Appender: " + name);
+        }
+        
         for (Map.Entry<String, String> param : params.entrySet()) {
-            //containing space
-            if(param.getKey() != null && param.getKey().contains(" ")) { 
-                AppUtils.crash("Param for appender " + name + " contanins a space - param: "+param);
-            }
-            if(param.getValue() != null && param.getValue().contains(" ")) { 
-                AppUtils.crash("Param value for appender " + name + " contanins a space - param: "+param);
-            }
             
             //threshold
             if(param.getKey().equals("threshold")) {

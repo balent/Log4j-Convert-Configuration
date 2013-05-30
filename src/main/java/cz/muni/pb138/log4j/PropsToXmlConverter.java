@@ -11,6 +11,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import cz.muni.pb138.log4j.model.Configuration;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,7 @@ public class PropsToXmlConverter implements Converter {
 
     private static Logger log = Logger.getLogger(PropsToXmlConverter.class);
     
-    public void convert(File sourceFile, File outputFile) throws Exception {
+    public void convert(File sourceFile, File outputFile) throws FileNotFoundException, UnsupportedEncodingException, IOException{
         FileInputStream fis = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(outputFile);
         

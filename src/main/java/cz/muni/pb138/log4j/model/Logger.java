@@ -245,6 +245,10 @@ public class Logger {
     }
     
     public void verify() {
+            if(!AppUtils.testParams(params)) {
+                AppUtils.crash("Param's name or value contains a space. Logger: " + name);
+            }
+        
             if(additivity != null) {
                 if(!additivity.equals("true") && !additivity.equals("false")) {
                     AppUtils.crash("Aditivity must be boolen");

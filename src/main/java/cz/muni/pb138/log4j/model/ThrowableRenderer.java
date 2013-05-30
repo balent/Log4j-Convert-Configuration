@@ -47,6 +47,16 @@ public class ThrowableRenderer {
         
         return prop;
     }
+    
+    public void verify() {
+        if(className != null && className.contains(" ")) {
+            AppUtils.crash("Throwable renderer : " + className + " contains a space");
+        }
+        
+        if(!AppUtils.testParams(params)) {
+            AppUtils.crash("Param's name or value contains a space. Throwable renderer: " + className);
+        }
+    }
 
     @Override
     public int hashCode() {

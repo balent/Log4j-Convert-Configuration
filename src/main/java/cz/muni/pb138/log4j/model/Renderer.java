@@ -52,6 +52,17 @@ public class Renderer {
         hash = 23 * hash + (this.renderingClass != null ? this.renderingClass.hashCode() : 0);
         return hash;
     }
+    
+    public void verify() {
+        if(renderedClass != null && renderedClass.contains(" ")) {
+            AppUtils.crash("Rendered class: " + renderedClass + " contains a space");
+        }
+        
+        if(renderingClass != null && renderingClass.contains(" ")) {
+            AppUtils.crash("Rendering class: " + renderingClass + " contains a space");
+        }
+        
+    }
 
     @Override
     public boolean equals(Object obj) {

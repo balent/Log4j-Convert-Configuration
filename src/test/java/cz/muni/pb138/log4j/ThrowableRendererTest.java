@@ -22,6 +22,7 @@ import org.junit.Test;
  */
 public class ThrowableRendererTest {
     private ThrowableRenderer patternThrowableRendererXML;
+    private ThrowableRenderer testThrowableRenderer;
     private List<String> patternThrowableRendererProp;
     
     @Before
@@ -67,4 +68,40 @@ public class ThrowableRendererTest {
         assertEquals(ourOutput.size(), patternThrowableRendererProp.size());
         assertEquals(ourOutput, patternThrowableRendererProp);
     }
+    
+    @Test
+    public void verifyTest() {
+        
+        testThrowableRenderer = new ThrowableRenderer();
+        testThrowableRenderer.verify();
+       
+        testThrowableRenderer.setClassName("cz.muni.fi.ThrowableRendererImpl ");
+        try {
+            testThrowableRenderer.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        testThrowableRenderer.setClassName("cz.muni.fi.ThrowableRendererImpl");
+        testThrowableRenderer.addParam("parameter1 -","value1");
+        try {
+            testThrowableRenderer.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+         
+        testThrowableRenderer.addParam("parameter1","value1 -");
+        try {
+            testThrowableRenderer.verify();
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
+        
+        
+    }
+    
+
 }
