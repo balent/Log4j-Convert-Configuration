@@ -32,7 +32,6 @@ public class RendererTest {
         patternRendererXML.setRenderingClass("cz.muni.fi.RenderingClass");
         
         patternRendererProp = new ArrayList<String>();
-        patternRendererProp.add("");
         patternRendererProp.add("log4j.renderer.cz.muni.fi.RenderedClass = cz.muni.fi.RenderingClass");
     }
 

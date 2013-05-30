@@ -33,7 +33,6 @@ public class LoggerFactoryTest {
         patternLoggerFactoryXML.addParam("xyz", "XYZ");        
         
         patternLoggerFactoryProp = new ArrayList<String>();
-        patternLoggerFactoryProp.add("");
         patternLoggerFactoryProp.add("log4j.loggerFactory = com.my.log.MyLoggerFactory");
         patternLoggerFactoryProp.add("log4j.loggerFactory.messageBundle = MyLoggerBundle");
         patternLoggerFactoryProp.add("log4j.loggerFactory.xyz = XYZ");        
