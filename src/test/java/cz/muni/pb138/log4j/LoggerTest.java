@@ -70,7 +70,6 @@ public class LoggerTest {
         
         
         patternLoggerProp = new ArrayList<String>();
-        patternLoggerProp.add("");
         patternLoggerProp.add("log4j.logger.com.google.name = WARN, appendJedna, appendDva");
         patternLoggerProp.add("log4j.additivity.com.google.name = false");
         patternLoggerProp.add("log4j.logger.com.google.name.DebugEnabled = false");
@@ -108,7 +107,7 @@ public class LoggerTest {
     
     @Test
     public void verifyTest() {
-        /*testLogger = new Logger();
+        testLogger = new Logger();
         
         testLogger.setAdditivity("not-false");
         try{
@@ -139,20 +138,21 @@ public class LoggerTest {
         } 
         testLogger.setCustomClass("com.google.name");
         
-        testLogger.setLoggerLevel("WARNING");
+        testLogger.setLoggerLevel(testLogger.CreateLoggerLevel("WARN-ING", null, null));
         try{
             testLogger.verify();
             fail();
         }catch(RuntimeException ex) {
             //good
         }
-        testLogger.setLoggerLevel("WARN");
+        
+        testLogger.setLoggerLevel(testLogger.CreateLoggerLevel("WARN", null, null));
         testLogger.addAppenderName("appendJedna s");
         try{
             testLogger.verify();
             fail();
         }catch(RuntimeException ex) {
             //good
-        } */
+        }
     }
 }

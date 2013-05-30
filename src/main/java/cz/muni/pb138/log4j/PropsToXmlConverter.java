@@ -30,7 +30,7 @@ public class PropsToXmlConverter implements Converter {
         convert(fis,out);
     }
 
-    public void convert(InputStream inputStream, OutputStream outputStream) throws UnsupportedEncodingException, IOException {
+    public void convert(InputStream inputStream, OutputStream outputStream) throws FileNotFoundException, UnsupportedEncodingException, IOException{
         FileInputStream fis = (FileInputStream) inputStream;
 
         Properties properties = new Properties();

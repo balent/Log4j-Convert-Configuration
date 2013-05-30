@@ -33,7 +33,6 @@ public class ThrowableRendererTest {
         patternThrowableRendererXML.addParam("parameter2","value2");        
         
         patternThrowableRendererProp = new ArrayList<String>();
-        patternThrowableRendererProp.add("");
         patternThrowableRendererProp.add("log4j.throwableRenderer = cz.muni.fi.ThrowableRendererImpl");
         patternThrowableRendererProp.add("log4j.throwableRenderer.parameter1 = value1");
         patternThrowableRendererProp.add("log4j.throwableRenderer.parameter2 = value2");        

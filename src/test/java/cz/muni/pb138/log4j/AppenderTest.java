@@ -48,7 +48,6 @@ public class AppenderTest {
         patternAppenderXML.addAppenderRef("unknownAppender");
         
         patternAppenderProp = new ArrayList<String>();
-        patternAppenderProp.add("");
         patternAppenderProp.add("log4j.appender.fileAPPENDER = org.apache.log4j.FileAppender");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.errorHandler = org.apache.BestHandler");
         patternAppenderProp.add("log4j.appender.fileAPPENDER.errorHandler.logger-ref = odkazNaLoger");
