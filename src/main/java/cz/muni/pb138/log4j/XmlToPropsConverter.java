@@ -28,7 +28,7 @@ public class XmlToPropsConverter implements Converter {
         convert(fis,out);
     }
     
-    public void convert(InputStream inputStream, OutputStream outputStream) throws UnsupportedEncodingException, IOException {
+    public void convert(InputStream inputStream, OutputStream outputStream) throws FileNotFoundException, UnsupportedEncodingException, IOException{
         DtdValidator dtdValidator = new DtdValidator(inputStream);
         
         Document document = dtdValidator.validate();
