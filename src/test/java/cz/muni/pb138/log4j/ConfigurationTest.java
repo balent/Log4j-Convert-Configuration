@@ -157,11 +157,6 @@ public class ConfigurationTest {
         Collections.sort(ourOutput);
         Collections.sort(patternConfigurationProp);
         
-        for(int i = 0; i<25; i++){
-            System.out.println(ourOutput.get(i) + "|");
-            System.out.println(patternConfigurationProp.get(i)+"|");
-        }
-        
         assertEquals(ourOutput.size(), patternConfigurationProp.size());
         assertEquals(ourOutput, patternConfigurationProp);
     }
