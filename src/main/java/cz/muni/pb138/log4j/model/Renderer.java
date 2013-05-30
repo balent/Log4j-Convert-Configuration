@@ -40,7 +40,6 @@ public class Renderer {
     
     public List<String> toProperty(List<String> prop) {
         
-        prop.add("");
         prop.add(AppUtils.prefix("renderer." + renderedClass + " = " + renderingClass));
         return prop;
     }

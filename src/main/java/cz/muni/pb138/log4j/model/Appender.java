@@ -244,7 +244,6 @@ public class Appender {
     
     public List<String> toProperty(List<String> prop) {
         
-        prop.add("");
         prop.add(AppUtils.prefix("appender." + name + " = " + className));
         
         if(threshold != null && !threshold.isEmpty()) {

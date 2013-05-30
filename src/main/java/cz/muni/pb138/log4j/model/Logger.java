@@ -198,8 +198,6 @@ public class Logger {
         String value;
         
         
-        prop.add("");
-        
         if(loggerLevel != null && !loggerLevel.getLevelClass().isEmpty()) {
             
             StringBuilder levelToPropBld = new StringBuilder(levelToProp);
