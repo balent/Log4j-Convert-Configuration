@@ -47,11 +47,11 @@ public class Configuration {
     public Map<String, Renderer> getRenderers() {
         return renderers;
     }
-    
-    public void addRenderer(Renderer renderer){
-        if(renderers.get(renderer.getRenderedClass()) == null){
+
+    public void addRenderer(Renderer renderer) {
+        if (renderers.get(renderer.getRenderedClass()) == null) {
             renderers.put(renderer.getRenderedClass(), renderer);
-        }else{
+        } else {
             AppUtils.crash("Two renderers for the class: " + renderer.getRenderedClass());
         }
     }
@@ -59,11 +59,11 @@ public class Configuration {
     public Map<String, Appender> getAppenders() {
         return appenders;
     }
-    
-    public void addAppender(Appender appender){
-        if(appenders.get(appender.getName()) == null){
+
+    public void addAppender(Appender appender) {
+        if (appenders.get(appender.getName()) == null) {
             appenders.put(appender.getName(), appender);
-        }else{
+        } else {
             AppUtils.crash("Two appenders with the same name: " + appender.getName());
         }
     }
@@ -71,11 +71,11 @@ public class Configuration {
     public Map<String, Logger> getLoggers() {
         return loggers;
     }
-    
-    public void addLogger(Logger logger){
-        if(loggers.get(logger.getName()) == null){
+
+    public void addLogger(Logger logger) {
+        if (loggers.get(logger.getName()) == null) {
             loggers.put(logger.getName(), logger);
-        }else{
+        } else {
             AppUtils.crash("Two loggers with the same name: " + logger.getName());
         }
     }
@@ -107,7 +107,7 @@ public class Configuration {
     }
 
     public void setReset(String reset) {
-         if ("true".equalsIgnoreCase(reset)) {
+        if ("true".equalsIgnoreCase(reset)) {
             this.reset = true;
         } else if ("false".equalsIgnoreCase(reset)) {
             this.reset = false;
@@ -116,15 +116,14 @@ public class Configuration {
         }
     }
 
-    
-    public void setThreshold(String threshold) { 
+    public void setThreshold(String threshold) {
         try {
             this.threshold = Level.toLevel(threshold); // FOR MARTIN: Nahrada za this.threshold = Threshold.valueOf(threshold)
         } catch (Exception ex) {
             AppUtils.crash("You have specified wrong configuration threshold", ex);
         }
     }
-    
+
     public void addConfig(String key, String value) {
         if (key.startsWith("logger")) {
             String loggerName = key.substring(7);   // logger names often contain "."
@@ -170,6 +169,21 @@ public class Configuration {
             } catch (IllegalArgumentException ex) {
                 AppUtils.crash("Wrong hierarchy-wide threshold has been given.", ex);
             }
+        } else if (key.startsWith("renderer")) {
+            String fullClassName = key.substring(9);
+            Renderer renderer = new Renderer();
+            renderer.setRenderingClass(fullClassName);
+            renderer.setRenderedClass(value);
+            addRenderer(renderer);
+        } else if (key.startsWith("throwableRenderer") || key.startsWith("throwablerenderer")) {
+            if (throwableRenderer == null) {                    // max. one throwableRenderrer possible
+                throwableRenderer = new ThrowableRenderer();
+            }
+            if (!key.substring(17).isEmpty() && key.substring(17).contains(".")) {
+                throwableRenderer.addParam(key.substring(18), value);
+            } else {
+                throwableRenderer.setClassName(value);
+            }
         }
 
     }
@@ -184,26 +198,26 @@ public class Configuration {
         for (Appender appender : appenders.values()) {
             appender.verify();
         }
-        
+
         //renderers
         for (Renderer renderer : renderers.values()) {
             renderer.verify();
         }
-        
-        if(throwableRenderer != null) {
+
+        if (throwableRenderer != null) {
             throwableRenderer.verify();
         }
-        
-        if(loggerFactory != null) {
+
+        if (loggerFactory != null) {
             loggerFactory.verify();
         }
-        
-        if(rootLogger != null) {
+
+        if (rootLogger != null) {
             rootLogger.verify();
         }
-        
-        
-        if( wideThreshold != null && wideThreshold.contains(" ")) {
+
+
+        if (wideThreshold != null && wideThreshold.contains(" ")) {
             AppUtils.crash("Wide treshold contains a space");
         }
     }
@@ -217,6 +231,12 @@ public class Configuration {
             rootElement.addAttribute("threshold", wideThreshold.toLowerCase());
         }
 
+        for (Renderer renderer : renderers.values()) {
+            renderer.addThisToElement(rootElement);
+        }
+        if(throwableRenderer != null) {
+            throwableRenderer.addThisToElement(rootElement);
+        }
         for (Appender appender : appenders.values()) {
             appender.addThisToElement(rootElement);
         }
@@ -228,121 +248,121 @@ public class Configuration {
         }
         return document;
     }
-    
-    public List<String> toProperty(){        
+
+    public List<String> toProperty() {
         List<String> prop = new ArrayList<String>();
-        
+
         //root element at first   
-        
-        for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
-            if(logger.isRootLogger()){
+
+        for (cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
+            if (logger.isRootLogger()) {
                 logger.toProperty(prop);
             }
         }
-              
+
         //loggers
-        for(cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
-            if(!logger.isRootLogger()){
+        for (cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
+            if (!logger.isRootLogger()) {
                 logger.toProperty(prop);
             }
         }
-        
+
         //appenders
-        for(cz.muni.pb138.log4j.model.Appender appender : appenders.values()) {
+        for (cz.muni.pb138.log4j.model.Appender appender : appenders.values()) {
             appender.toProperty(prop);
-            
+
         }
         //renderers
-        for(cz.muni.pb138.log4j.model.Renderer renderer : renderers.values()) {
+        for (cz.muni.pb138.log4j.model.Renderer renderer : renderers.values()) {
             renderer.toProperty(prop);
-            
+
         }
-        
+
         //another params
-  
-        if(threshold != null) {
+
+        if (threshold != null) {
             prop.add(AppUtils.prefix("threshold = " + threshold.toString().toLowerCase()));
         }
-        if(debug != null) {
+        if (debug != null) {
             prop.add(AppUtils.prefix("debug = " + debug));
         }
-        
-        if(reset != null) {
+
+        if (reset != null) {
             prop.add(AppUtils.prefix("reset = " + reset));
         }
-        
-        if(wideThreshold != null && !wideThreshold.isEmpty()) {
+
+        if (wideThreshold != null && !wideThreshold.isEmpty()) {
             prop.add(AppUtils.prefix("wideThreshold = " + wideThreshold));
         }
-        
-        if(throwableRenderer != null) {
+
+        if (throwableRenderer != null) {
             throwableRenderer.toProperty(prop, "");
         }
-        if(loggerFactory != null) {
+        if (loggerFactory != null) {
             loggerFactory.toProperty(prop, "");
         }
-        
+
         return prop;
     }
-    
-    public void setUpFromElement(Element rootElement){
+
+    public void setUpFromElement(Element rootElement) {
         String thresholdAtt = rootElement.attributeValue("threshold");
         String debugAtt = rootElement.attributeValue("debug");
         String resetAtt = rootElement.attributeValue("reset");
-            
-        if(thresholdAtt != null){
-            
-            if(!thresholdAtt.equalsIgnoreCase("null")){
+
+        if (thresholdAtt != null) {
+
+            if (!thresholdAtt.equalsIgnoreCase("null")) {
                 thresholdAtt = thresholdAtt.toLowerCase(Locale.ENGLISH);
                 setThreshold(thresholdAtt);
             }
         }
-        
-        if(debugAtt != null){
-            if(! debugAtt.equalsIgnoreCase("null")){
+
+        if (debugAtt != null) {
+            if (!debugAtt.equalsIgnoreCase("null")) {
                 debugAtt = debugAtt.toLowerCase(Locale.ENGLISH);
                 setDebug(debugAtt);
             }
         }
-        
-        if(resetAtt != null){
-            if(! resetAtt.equalsIgnoreCase("null")){
+
+        if (resetAtt != null) {
+            if (!resetAtt.equalsIgnoreCase("null")) {
                 resetAtt = resetAtt.toLowerCase(Locale.ENGLISH);
                 setReset(resetAtt);
             }
         }
-        
-        for(Element e : (List<Element>) rootElement.elements("renderer")){
+
+        for (Element e : (List<Element>) rootElement.elements("renderer")) {
             Renderer renderer = new Renderer();
             renderer.setUpFromElement(e);
             addRenderer(renderer);
         }
-        
-        if(rootElement.element("throwableRenderer") != null){
+
+        if (rootElement.element("throwableRenderer") != null) {
             ThrowableRenderer tRenderer = new ThrowableRenderer();
             tRenderer.setUpFromElement(rootElement.element("throwableRenderer"));
             setThrowableRenderer(tRenderer);
         }
-        
-        for(Element e : (List<Element>) rootElement.elements("appender")){
+
+        for (Element e : (List<Element>) rootElement.elements("appender")) {
             Appender appender = new Appender();
             appender.setUpFromElement(e);
             addAppender(appender);
         }
-        
-        for(Element e : (List<Element>) rootElement.elements("logger")){
+
+        for (Element e : (List<Element>) rootElement.elements("logger")) {
             cz.muni.pb138.log4j.model.Logger logger = new cz.muni.pb138.log4j.model.Logger();
             logger.setUpFromElement(e);
             addLogger(logger);
         }
-        
-        
-        if(rootElement.element("loggerFactory") != null){
+
+
+        if (rootElement.element("loggerFactory") != null) {
             LoggerFactory loggerFactory = new LoggerFactory();
             loggerFactory.setUpFromElement(rootElement.element("loggerFactory"));
             setLoggerFactory(loggerFactory);
         }
-        if(rootElement.element("root") != null){
+        if (rootElement.element("root") != null) {
             cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
             rootLogger.setUpFromElement(rootElement.element("root"));
             addLogger(rootLogger);

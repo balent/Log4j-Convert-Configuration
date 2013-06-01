@@ -17,6 +17,10 @@ import org.dom4j.Element;
 public class ThrowableRenderer {
     private String className;
     private Map<String, String> params = new HashMap<String, String>();
+
+    public Map<String, String> getParams() {
+        return params;
+    }
     
     public void addParam(String key, String value){
         if(params.get(key) == null){
@@ -28,6 +32,17 @@ public class ThrowableRenderer {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+    
+    public Element addThisToElement(Element rootElement) {
+        Element throwableRendererElement = rootElement.addElement("throwableRenderer");
+        throwableRendererElement.addAttribute("class", className);
+        for(String param : params.keySet()) {
+            Element paramElement = throwableRendererElement.addElement("param");
+            paramElement.addAttribute("name", param);
+            paramElement.addAttribute("value", params.get(param));
+        }
+        return rootElement;
     }
     
     public void setUpFromElement(Element element){

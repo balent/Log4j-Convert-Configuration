@@ -33,6 +33,13 @@ public class Renderer {
         this.renderingClass = renderingClass;
     }
     
+    public Element addThisToElement(Element rootElement) {
+        Element rendererElement = rootElement.addElement("renderer");
+        rendererElement.addAttribute("renderedClass", getRenderedClass());
+        rendererElement.addAttribute("renderingClass", getRenderingClass());
+        return rootElement;
+    }
+    
     public void setUpFromElement(Element element){
         renderedClass = element.attributeValue("renderedClass");
         renderingClass = element.attributeValue("renderingClass");
