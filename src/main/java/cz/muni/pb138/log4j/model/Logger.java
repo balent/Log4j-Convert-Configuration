@@ -272,7 +272,7 @@ public class Logger {
         
             if(additivity != null) {
                 if(!additivity.equals("true") && !additivity.equals("false")) {
-                    AppUtils.crash("Aditivity must be boolen");
+                    AppUtils.crash("Aditivity must be boolean");
                 }
             }
             
@@ -283,16 +283,16 @@ public class Logger {
             }
             
             if(name != null && name.contains(" ")) {
-                AppUtils.crash("Logger name cannot contains a space. Name was" + name);
+                AppUtils.crash("Logger name cannot contain a space. Name was" + name);
             }
             
             if(customClass != null && customClass.contains(" ")) {
-                AppUtils.crash("Logger class cannot contains a space. Class name was" + customClass);
+                AppUtils.crash("Logger class cannot contain a space. Class name was" + customClass);
             }
             
             for(String appender : appenderNames) {
                 if(appender.contains(" ")) {
-                    AppUtils.crash("Appender name can not contains a space. Appender name was" + appender);
+                    AppUtils.crash("Appender name can not contain a space. Appender name was" + appender);
                 }
             }
         

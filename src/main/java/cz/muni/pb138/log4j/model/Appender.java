@@ -163,9 +163,9 @@ public class Appender {
                     if (errH.substring(1).equalsIgnoreCase("appender-ref")) {
                         errorHandler.setAppender(value);
                     } else if (errH.substring(1).equalsIgnoreCase("logger-ref")) {
-                        if(value.contains(",")) {
+                        if (value.contains(",")) {
                             String[] values = value.replaceAll("\\s", "").split(",");
-                            for(String logger: values) {
+                            for (String logger : values) {
                                 errorHandler.addLogger(logger);
                             }
                         }
@@ -197,21 +197,21 @@ public class Appender {
             if (errorHandler.isRoot()) {
                 errorHandlerElement.addElement("root-ref");
             }
-            for(String logger: errorHandler.getLoggers()) {
+            for (String logger : errorHandler.getLoggers()) {
                 Element logger_refElement = errorHandlerElement.addElement("logger-ref");
                 logger_refElement.addAttribute("ref", logger);
             }
-            if(errorHandler.getAppender() != null) {
+            if (errorHandler.getAppender() != null) {
                 Element appender_refElement = errorHandlerElement.addElement("appender-ref");
                 appender_refElement.addAttribute("ref", errorHandler.getAppender());
             }
-            for(String paramKey: errorHandler.getParams().keySet()) {
+            for (String paramKey : errorHandler.getParams().keySet()) {
                 Element paramElement = errorHandlerElement.addElement("param");
                 paramElement.addAttribute("name", paramKey);
                 paramElement.addAttribute("value", errorHandler.getParams().get(paramKey));
             }
         }
-        
+
         for (String paramKey : params.keySet()) {
             Element paramElement = appenderElement.addElement("param");
             paramElement.addAttribute("name", paramKey);
@@ -358,13 +358,14 @@ public class Appender {
 
             //checking name
             if (!checkStandardLayoutName(layoutClassName)) {
-                AppUtils.crash("You have entered wrong layout class name. Layout class name was " + layoutClassName);
-            }
-
-            //checking params            
-            for (String layoutParam : layoutParams.keySet()) {
-                if (!checkStandardLayoutParam(layoutClassName, layoutParam)) {
-                    AppUtils.crash("You have entered wrong layout paral. Layout param was " + layoutParam);
+                log.debug("custom layout: " + layoutClassName);
+                // custom-defined layout is possible     
+            } else {
+                // if predefined layout: checking params            
+                for (String layoutParam : layoutParams.keySet()) {
+                    if (!checkStandardLayoutParam(layoutClassName, layoutParam)) {
+                        AppUtils.crash("You have entered wrong layout param. Layout param was " + layoutParam);
+                    }
                 }
             }
         }
@@ -384,12 +385,34 @@ public class Appender {
                     AppUtils.crash("You have entered wrong threshold for appender " + name);
                 }
             } else {
-                //another params
+                //other params than threshold (common for every appender)
                 try {
                     boolean paramFound = false;
                     for (String paramName : AppenderParams.valueOf(name).getParams()) {
                         if (paramName.equalsIgnoreCase(param.getKey())) {
                             paramFound = true;
+                            // checking validity of values (only where possible to check)
+                            if (paramName.equalsIgnoreCase("Target")) {
+                                if (!param.getValue().equalsIgnoreCase("System.out")
+                                        && !param.getValue().equalsIgnoreCase("System.err")) {
+                                    AppUtils.crash("You have entered wrong value for "
+                                            + param.getKey() + ", only System.out or System.err possible.");
+                                }
+                            } else if (paramName.equalsIgnoreCase("ImmediateFlush") || paramName.equalsIgnoreCase("Append")
+                                    || paramName.equalsIgnoreCase("BufferedIO") || paramName.equalsIgnoreCase("LocationInfo")) {
+                                if (!param.getValue().equalsIgnoreCase("true") && !param.getValue().equalsIgnoreCase("false")) {
+                                    AppUtils.crash("You have entered wrong value for "
+                                            + param.getKey() + ", only true/false is possible.");
+                                }
+                            } else if (paramName.equalsIgnoreCase("MaxBackupIndex") || paramName.equalsIgnoreCase("BufferSize")
+                                    || paramName.equalsIgnoreCase("ReconnectionDelay") || paramName.equalsIgnoreCase("Port")) {
+                                try {
+                                    int i = Integer.valueOf(param.getValue());
+                                } catch (NumberFormatException ex) {
+                                    AppUtils.crash("You have entered wrong value for "
+                                            + param.getKey() + ", only integer value is possible.");
+                                }
+                            }
                             break;
                         }
                     }
@@ -458,9 +481,9 @@ public class Appender {
         consoleappender("Encoding", "ImmediateFlush", "Target", "Threshold"),
         fileappender("Append", "Encoding", "BufferedIO", "BufferSize", "File", "ImmediateFlush", "Threshold"),
         rollingfileappender("Append", "Encoding", "BufferedIO", "BufferSize", "File", "ImmediateFlush",
-        "MaxBackupIndex", "MaxFileSize", "Threshold"),
+        "MaxBackupIndex", "MaxFileSize", "Threshold", "LocationInfo"),
         dailyrollingfileappender("Append", "Encoding", "BufferedIO", "BufferSize", "File", "ImmediateFlush",
-        "DatePattern", "Threshold"),
+        "DatePattern", "Threshold", "ReconnectionDelay"),
         writerappender("Encoding", "ImmediateFlush", "Threshold"),
         asyncappender("BufferSize", "Threshold");
         private List<String> params = new ArrayList<String>();
