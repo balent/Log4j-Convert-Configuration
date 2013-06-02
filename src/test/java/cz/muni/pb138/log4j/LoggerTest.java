@@ -34,7 +34,7 @@ public class LoggerTest {
             Map<String, String> params, 
             List<String> apps, 
             String add, 
-            String custClass, 
+            String loggerClass, 
             boolean isRoot) {
         
         Logger l = new Logger();
@@ -52,7 +52,7 @@ public class LoggerTest {
         
         l.setRootLogger(isRoot);
         
-        l.setCustomClass(custClass);
+        l.setLoggerClass(loggerClass);
         
         return l;
     }
@@ -129,18 +129,17 @@ public class LoggerTest {
         }
         
         testLogger.setName("com. google.name");
-        testLogger.setCustomClass("com. google. name");
+        testLogger.setLoggerClass("com. google. name");
         try{
             testLogger.verify();
             fail();
         }catch(RuntimeException ex) {
             //good
         } 
-        testLogger.setCustomClass("com.google.name");
+        testLogger.setLoggerClass("com.google.name");
         
-        testLogger.setLoggerLevel(testLogger.CreateLoggerLevel("WARN-ING", null, null));
         try{
-            testLogger.verify();
+            testLogger.setLoggerLevel(testLogger.CreateLoggerLevel("WARN-ING", null, null));
             fail();
         }catch(RuntimeException ex) {
             //good

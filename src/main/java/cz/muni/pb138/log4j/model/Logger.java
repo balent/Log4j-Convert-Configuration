@@ -21,21 +21,24 @@ public class Logger {
     private List<String> appenderNames = new ArrayList<String>();
     private Map<String, String> params = new HashMap<String, String>();
     private String additivity; // TODO:  it should by only boolean 
-    private String level; //deprecated
     private LoggerLevel loggerLevel;
-    private String customClass = "";
+    private String loggerClass = "";
 
-    public String getCustomClass() {
-        return customClass;
+    public String getLoggerClass() {
+        return loggerClass;
     }
 
-    public void setCustomClass(String customClass) {
-        this.customClass = customClass;
+    public void setLoggerClass(String loggerClass) {
+        this.loggerClass = loggerClass;
     }
     private boolean isRootLogger = false;
 
     public LoggerLevel CreateLoggerLevel(String level, Map<String, String> params, String levClass){
         LoggerLevel l = new LoggerLevel();
+        
+        if(!l.checkStandardLevel(level)) {
+           throw new RuntimeException(level + " is not valid LoggerLevel");
+        }
         
         l.setLevel(level);
         
@@ -79,10 +82,6 @@ public class Logger {
     public void setAdditivity(String additivity) {
         this.additivity = additivity;
     }
-  
-    public String getLevel() {
-        return level;
-    }
 
     public LoggerLevel getLoggerLevel() {
         return loggerLevel;
@@ -112,19 +111,21 @@ public class Logger {
         String[] values = value.replaceAll("\\s", "").split(",");
 
         try {
-            level = Level.toLevel(values[0]).toString(); // FOR MARTIN: Nahrada za level = Threshold.valueOf(values[0]).toString()
-            
+            loggerLevel = CreateLoggerLevel(values[0], null, "");
             // logger may even have no level assigned - however there is no way to recognize whether
             // first value is an appender name or a wrong level name = this app REQUIRES null/inherited
             // level for all loggers where implied inheritance is intended and debug level of root logger
             // if default level is intended
         } catch (Exception ex) {
             if (values[0].contains("#")) {    // custom level value
-                level = values[0].substring(0, values[0].indexOf('#'));
-                customClass = values[0].substring(values[0].indexOf('#') + 1);
+                loggerLevel = new LoggerLevel();
+                loggerLevel.setLevel(values[0].substring(0, values[0].indexOf('#')));
+                loggerLevel.setLevelClass(values[0].substring(values[0].indexOf('#') + 1));
             } else if (!isRootLogger && (values[0].equalsIgnoreCase("inherited") || 
                     values[0].equalsIgnoreCase("null"))) {      // rootlogger cannot be null/inherited
-                level = values[0];
+                loggerLevel = new LoggerLevel();
+                loggerLevel.setLevel(values[0]);
+                loggerLevel.setLevelClass("");
             } else {
                 AppUtils.crash("You have specified wrong logger level", ex);
             }
@@ -150,11 +151,12 @@ public class Logger {
         }
 
         Element levelElement = loggerElement.addElement("level");
-        levelElement.addAttribute("value", level);
-        if (!customClass.equals("")) {
-            levelElement.addAttribute("class", customClass);
-        }
+        levelElement.addAttribute("value", loggerLevel.getLevel());
 
+        if (!loggerLevel.getLevelClass().equals("")) {
+            levelElement.addAttribute("class", loggerLevel.getLevelClass());
+        }
+        
         for (String appenderName : appenderNames) {
             Element appenderElement = loggerElement.addElement("appender-ref");
             appenderElement.addAttribute("ref", appenderName);
@@ -170,7 +172,7 @@ public class Logger {
         else
         {
             if(element.attributeValue("class") != null){
-                customClass = element.attributeValue("class");
+                loggerClass = element.attributeValue("class");
             }
             name = element.attributeValue("name");
             additivity =  element.attributeValue("additivity");
@@ -226,8 +228,8 @@ public class Logger {
             AppUtils.addParams(prop, "rootLogger", params);
 
             //custom class
-            if(customClass !=null && !customClass.isEmpty()) {
-                prop.add(AppUtils.prefix("rootLogger.class = "+customClass));
+            if(loggerClass !=null && !loggerClass.isEmpty()) {
+                prop.add(AppUtils.prefix("rootLogger.class = "+loggerClass));
             }
 
             //level
@@ -248,8 +250,8 @@ public class Logger {
             AppUtils.addParams(prop, "logger." + name, params);
 
             //custom class
-            if(customClass !=null && !customClass.isEmpty()) {
-                prop.add(AppUtils.prefix("logger." + name + ".class = "+customClass));
+            if(loggerClass !=null && !loggerClass.isEmpty()) {
+                prop.add(AppUtils.prefix("logger." + name + ".class = "+loggerClass));
             }
 
             //level
@@ -277,8 +279,12 @@ public class Logger {
             }
             
             if(loggerLevel != null) {
-                if(!loggerLevel.checkStandardLevel(loggerLevel.getLevel()))  {
-                    AppUtils.crash("Level is not standard");
+                if(!"null".equals(loggerLevel.getLevel().toLowerCase()) &&
+                   !"inherited".equals(loggerLevel.getLevel().toLowerCase()) &&     
+                   !loggerLevel.checkStandardLevel(loggerLevel.getLevel()) &&
+                   "".equals(loggerLevel.getLevelClass()))  {
+                    
+                    AppUtils.crash("Level: "+ loggerLevel.getLevel() + " is not standard");
                 }
             }
             
@@ -286,8 +292,8 @@ public class Logger {
                 AppUtils.crash("Logger name cannot contain a space. Name was" + name);
             }
             
-            if(customClass != null && customClass.contains(" ")) {
-                AppUtils.crash("Logger class cannot contain a space. Class name was" + customClass);
+            if(loggerClass != null && loggerClass.contains(" ")) {
+                AppUtils.crash("Logger class cannot contain a space. Class name was" + loggerClass);
             }
             
             for(String appender : appenderNames) {
@@ -370,7 +376,7 @@ public class Logger {
                 return true;
             }catch(Exception e)
             {
-               return false;
+                return false;
             }
         }
 

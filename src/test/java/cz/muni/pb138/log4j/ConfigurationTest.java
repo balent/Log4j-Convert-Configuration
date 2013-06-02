@@ -61,7 +61,7 @@ public class ConfigurationTest {
         Map<String, String> rootparams = new HashMap();
         rootparams.put("rootlevparam", "rootlevvalue");
         root.setLoggerLevel(root.CreateLoggerLevel("WARN", rootparams, "RootLevelClass"));
-        patternConfigurationXML.addLogger(root);
+        patternConfigurationXML.setRootLogger(root);
         
         Logger logger;
         params.clear();

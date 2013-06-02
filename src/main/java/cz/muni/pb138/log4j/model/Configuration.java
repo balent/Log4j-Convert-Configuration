@@ -80,6 +80,10 @@ public class Configuration {
         }
     }
 
+    public void setRootLogger(Logger root) {
+        rootLogger = root;
+    }
+    
     public Logger getRootLogger() {
         return rootLogger;
     }
@@ -254,10 +258,8 @@ public class Configuration {
 
         //root element at first   
 
-        for (cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
-            if (logger.isRootLogger()) {
-                logger.toProperty(prop);
-            }
+        if (rootLogger != null && rootLogger.isRootLogger()) {
+                rootLogger.toProperty(prop);
         }
 
         //loggers
@@ -365,7 +367,7 @@ public class Configuration {
         if (rootElement.element("root") != null) {
             cz.muni.pb138.log4j.model.Logger rootLogger = new cz.muni.pb138.log4j.model.Logger();
             rootLogger.setUpFromElement(rootElement.element("root"));
-            addLogger(rootLogger);
+            setRootLogger(rootLogger);
         }
     }
 
@@ -391,6 +393,9 @@ public class Configuration {
             return false;
         }
         if (this.appenders != other.appenders && (this.appenders == null || !this.appenders.equals(other.appenders))) {
+            return false;
+        }
+        if (this.rootLogger != other.rootLogger && (this.rootLogger == null || !this.rootLogger.equals(other.rootLogger))) {
             return false;
         }
         if (this.threshold != other.threshold && (this.threshold == null || !this.threshold.equals(other.threshold))) {
