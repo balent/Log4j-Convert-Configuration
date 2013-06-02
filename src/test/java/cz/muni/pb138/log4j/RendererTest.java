@@ -27,15 +27,15 @@ import org.junit.Test;
  * @author jozef
  */
 public class RendererTest {
-    private Renderer patternRendererXML;
+    private Renderer patternRenderer;
     private Renderer testRenderer;
     private List<String> patternRendererProp;
     
     @Before
     public void setUp() {
-        patternRendererXML = new Renderer();
-        patternRendererXML.setRenderedClass("cz.muni.fi.RenderedClass");
-        patternRendererXML.setRenderingClass("cz.muni.fi.RenderingClass");
+        patternRenderer = new Renderer();
+        patternRenderer.setRenderedClass("cz.muni.fi.RenderedClass");
+        patternRenderer.setRenderingClass("cz.muni.fi.RenderingClass");
         
         patternRendererProp = new ArrayList<String>();
         patternRendererProp.add("log4j.renderer.cz.muni.fi.RenderedClass = cz.muni.fi.RenderingClass");
@@ -57,13 +57,13 @@ public class RendererTest {
         
         readedRenderer.setUpFromElement(rootElement);
         
-        assertEquals(patternRendererXML, readedRenderer);
+        assertEquals(patternRenderer, readedRenderer);
     }
     
     @Test
     public void toPropertyTest() {
         
-        List<String> ourOutput = patternRendererXML.toProperty(new ArrayList<String>());
+        List<String> ourOutput = patternRenderer.toProperty(new ArrayList<String>());
         
         Collections.sort(ourOutput);
         Collections.sort(patternRendererProp);
@@ -119,6 +119,6 @@ public class RendererTest {
         configuration.verify();
         
         assertEquals(1, configuration.getRenderers().size());
-        assertEquals(patternRendererXML, configuration.getRenderers().get("cz.muni.fi.renderedclass"));
+        assertEquals(patternRenderer, configuration.getRenderers().get("cz.muni.fi.renderedclass"));
     }
 }

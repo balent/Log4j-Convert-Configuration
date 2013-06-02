@@ -127,7 +127,7 @@ public class Logger {
                 loggerLevel.setLevel(values[0]);
                 loggerLevel.setLevelClass("");
             } else {
-                AppUtils.crash("You have specified wrong logger level", ex);
+                AppUtils.crash("You have specified wrong logger level: " + values[0] , ex);
             }
         }
         // TODO

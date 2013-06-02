@@ -194,6 +194,11 @@ public class Appender {
         if (errorHandler != null) {
             Element errorHandlerElement = appenderElement.addElement("errorHandler");
             errorHandlerElement.addAttribute("class", errorHandler.getClassName());
+            for (String paramKey : errorHandler.getParams().keySet()) {
+                Element paramElement = errorHandlerElement.addElement("param");
+                paramElement.addAttribute("name", paramKey);
+                paramElement.addAttribute("value", errorHandler.getParams().get(paramKey));
+            }
             if (errorHandler.isRoot()) {
                 errorHandlerElement.addElement("root-ref");
             }
@@ -204,11 +209,6 @@ public class Appender {
             if (errorHandler.getAppender() != null) {
                 Element appender_refElement = errorHandlerElement.addElement("appender-ref");
                 appender_refElement.addAttribute("ref", errorHandler.getAppender());
-            }
-            for (String paramKey : errorHandler.getParams().keySet()) {
-                Element paramElement = errorHandlerElement.addElement("param");
-                paramElement.addAttribute("name", paramKey);
-                paramElement.addAttribute("value", errorHandler.getParams().get(paramKey));
             }
         }
 

@@ -10,13 +10,13 @@
   </throwableRenderer>
   <appender name="appendername" class="fully.qualified.name.of.appender.class">
     <errorHandler class="fully.qualified.name.of.filter.class">
+      <param name="option1" value="value1"/>
+      <param name="optionn" value="valuen"/>
       <root-ref/>
       <logger-ref ref="loggername"/>
       <logger-ref ref="loggername2"/>
       <logger-ref ref="loggername3"/>
       <appender-ref ref="appendername"/>
-      <param name="option1" value="value1"/>
-      <param name="optionn" value="valuen"/>
     </errorHandler>
     <param name="option1" value="value1"/>
     <param name="optionn" value="valuen"/>
