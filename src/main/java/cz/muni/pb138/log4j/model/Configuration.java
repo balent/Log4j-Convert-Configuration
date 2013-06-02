@@ -176,8 +176,8 @@ public class Configuration {
         } else if (key.startsWith("renderer")) {
             String fullClassName = key.substring(9);
             Renderer renderer = new Renderer();
-            renderer.setRenderingClass(fullClassName);
-            renderer.setRenderedClass(value);
+            renderer.setRenderingClass(value);
+            renderer.setRenderedClass(fullClassName);
             addRenderer(renderer);
         } else if (key.startsWith("throwableRenderer") || key.startsWith("throwablerenderer")) {
             if (throwableRenderer == null) {                    // max. one throwableRenderrer possible

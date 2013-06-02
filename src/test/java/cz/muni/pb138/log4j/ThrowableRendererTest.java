@@ -4,10 +4,16 @@
  */
 package cz.muni.pb138.log4j;
 
+import cz.muni.pb138.log4j.model.Configuration;
 import cz.muni.pb138.log4j.model.ThrowableRenderer;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -21,16 +27,16 @@ import org.junit.Test;
  * @author jozef
  */
 public class ThrowableRendererTest {
-    private ThrowableRenderer patternThrowableRendererXML;
+    private ThrowableRenderer patternThrowableRenderer;
     private ThrowableRenderer testThrowableRenderer;
     private List<String> patternThrowableRendererProp;
     
     @Before
     public void setUp() {
-        patternThrowableRendererXML = new ThrowableRenderer();
-        patternThrowableRendererXML.setClassName("cz.muni.fi.ThrowableRendererImpl");
-        patternThrowableRendererXML.addParam("parameter1","value1");
-        patternThrowableRendererXML.addParam("parameter2","value2");        
+        patternThrowableRenderer = new ThrowableRenderer();
+        patternThrowableRenderer.setClassName("cz.muni.fi.ThrowableRendererImpl");
+        patternThrowableRenderer.addParam("parameter1","value1");
+        patternThrowableRenderer.addParam("parameter2","value2");        
         
         patternThrowableRendererProp = new ArrayList<String>();
         patternThrowableRendererProp.add("log4j.throwableRenderer = cz.muni.fi.ThrowableRendererImpl");
@@ -54,13 +60,13 @@ public class ThrowableRendererTest {
         
         readedThrowableRenderer.setUpFromElement(rootElement);
         
-        assertEquals(patternThrowableRendererXML, readedThrowableRenderer);
+        assertEquals(patternThrowableRenderer, readedThrowableRenderer);
     }
     
     @Test
     public void toPropertyTest() {
         
-        List<String> ourOutput = patternThrowableRendererXML.toProperty(new ArrayList<String>(), "");
+        List<String> ourOutput = patternThrowableRenderer.toProperty(new ArrayList<String>(), "");
         
         Collections.sort(ourOutput);
         Collections.sort(patternThrowableRendererProp);
@@ -98,9 +104,29 @@ public class ThrowableRendererTest {
         }catch(RuntimeException ex) {
             //good
         }
-        
-        
     }
     
+    @Test
+    public void fromPropertiesToModelTest() throws FileNotFoundException, IOException{
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("unitTestFiles/patternThrowableRenderer.properties"));
 
+        // now you have properties object and you can work with it.
+        Configuration configuration = new Configuration();
+
+        for (String propertyKey : properties.stringPropertyNames()) {
+            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
+            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
+                String newKey = key.substring(6); // remove initial "log4j."
+                configuration.addConfig(newKey, value);
+            } else {
+                AppUtils.crash("every property name must start with 'log4j': " + key);
+            }
+        }
+
+        configuration.verify();
+        
+        assertEquals(patternThrowableRenderer, configuration.getThrowableRenderer());
+    }
 }
