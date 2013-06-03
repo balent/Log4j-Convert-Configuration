@@ -129,7 +129,9 @@ public class Configuration {
     }
 
     public void addConfig(String key, String value) {
-        if (key.startsWith("logger")) {
+        if (key.equals("debug")) {
+            setDebug(value);
+        } else if (key.startsWith("logger")) {
             String loggerName = key.substring(7);   // logger names often contain "."
             Logger logger = loggers.get(loggerName);
             if (logger == null) {
@@ -230,6 +232,10 @@ public class Configuration {
         document.addDocType("log4j:configuration", null, "log4j.dtd");
         Element rootElement = document.addElement("log4j:configuration");
         rootElement.addNamespace("log4j", "http://jakarta.apache.org/log4j/");
+        if (debug != null) {
+            rootElement.addAttribute("debug", String.valueOf(debug).toLowerCase());
+        }
+        
         if (wideThreshold != null) {
             rootElement.addAttribute("threshold", wideThreshold.toLowerCase());
         }

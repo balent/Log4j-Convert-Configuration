@@ -176,7 +176,9 @@ public class Logger {
                 loggerClass = element.attributeValue("class");
             }
             name = element.attributeValue("name");
-            additivity =  element.attributeValue("additivity");
+            
+            additivity = element.attributeValue("additivity");
+            System.out.println("additivity " + additivity);
         }
         
         // TODO, zistit zoznam moznych parametrov pre logger
@@ -191,7 +193,6 @@ public class Logger {
             loggerLevel = new LoggerLevel();
             loggerLevel.setUpFromElement(element.element("priority"));
         }
-        
         
         for(Element e : (List<Element>) element.elements("appender-ref")){
             addAppenderName(e.attributeValue("ref"));
@@ -273,7 +274,7 @@ public class Logger {
                 AppUtils.crash("Param's name or value contains a space. Logger: " + name);
             }
         
-            if(additivity != null) {
+            if(additivity != null && !additivity.isEmpty()) {
                 if(!additivity.equals("true") && !additivity.equals("false")) {
                     AppUtils.crash("Aditivity must be boolean");
                 }
