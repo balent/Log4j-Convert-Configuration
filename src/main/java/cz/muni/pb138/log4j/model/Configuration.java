@@ -24,7 +24,6 @@ public class Configuration {
     private String threshold; // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
     private Boolean debug;
     private Boolean reset;
-    private String wideThreshold;
     private ThrowableRenderer throwableRenderer;
     private LoggerFactory loggerFactory;
 
@@ -177,7 +176,7 @@ public class Configuration {
             }
         } else if (key.toLowerCase().equals("threshold")) {
             try {
-                wideThreshold = Level.toLevel(value).toString(); // FOR MARTIN: Nahrada za wideThreshold = Threshold.valueOf(value).toString()
+                threshold = Level.toLevel(value).toString(); // FOR MARTIN: Nahrada za wideThreshold = Threshold.valueOf(value).toString()
             } catch (IllegalArgumentException ex) {
                 AppUtils.crash("Wrong hierarchy-wide threshold has been given.", ex);
             }
@@ -210,13 +209,7 @@ public class Configuration {
         for (Appender appender : appenders.values()) {
             appender.verify();
         }
-        
-        // verify threshold
-        try {
-            Level.toLevel(threshold);
-        } catch (Exception ex) {
-            AppUtils.crash("You have specified wrong configuration threshold", ex);
-        }
+       
 
         //renderers
         for (Renderer renderer : renderers.values()) {
@@ -234,9 +227,14 @@ public class Configuration {
         if (rootLogger != null) {
             rootLogger.verify();
         }
+        
+        // verify Threshold
+        if (!Level.toLevel(threshold).toString().equalsIgnoreCase(threshold)) {
+            AppUtils.crash("Configuration treshold is not correctly set: " + threshold);
+        }
 
-        if (wideThreshold != null && wideThreshold.contains(" ")) {
-            AppUtils.crash("Wide treshold contains a space");
+        if (threshold != null && threshold.contains(" ")) {
+            AppUtils.crash("Configuration treshold contains a space");
         }
     }
 
@@ -249,8 +247,8 @@ public class Configuration {
             rootElement.addAttribute("debug", String.valueOf(debug));
         }
         
-        if (wideThreshold != null) {
-            rootElement.addAttribute("threshold", wideThreshold);
+        if (threshold != null) {
+            rootElement.addAttribute("threshold", threshold.toLowerCase());
         }
 
         for (Renderer renderer : renderers.values()) {
@@ -300,7 +298,6 @@ public class Configuration {
         }
 
         //another params
-
         if (threshold != null) {
             prop.add(AppUtils.prefix("threshold = " + threshold));
         }
@@ -310,10 +307,6 @@ public class Configuration {
 
         if (reset != null) {
             prop.add(AppUtils.prefix("reset = " + reset));
-        }
-
-        if (wideThreshold != null && !wideThreshold.isEmpty()) {
-            prop.add(AppUtils.prefix("wideThreshold = " + wideThreshold));
         }
 
         if (throwableRenderer != null) {
@@ -431,9 +424,6 @@ public class Configuration {
             return false;
         }
         if (this.reset != other.reset && (this.reset == null || !this.reset.equals(other.reset))) {
-            return false;
-        }
-        if ((this.wideThreshold == null) ? (other.wideThreshold != null) : !this.wideThreshold.equals(other.wideThreshold)) {
             return false;
         }
         if (this.throwableRenderer != other.throwableRenderer && (this.throwableRenderer == null || !this.throwableRenderer.equals(other.throwableRenderer))) {
