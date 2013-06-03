@@ -85,8 +85,8 @@ public class Main {
         File outputFile = new File(outputFileName);
         
         if (!inputFile.exists()) {
-            log.error("Input file doesn't exist");
-            AppUtils.crash("Input file doesn't exist");
+            System.err.println("Input file doesn't exist");
+            System.exit(1);
         }
 
         try {

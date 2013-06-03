@@ -75,7 +75,16 @@ public class Configuration {
         if (loggers.get(logger.getName()) == null) {
             loggers.put(logger.getName(), logger);
         } else {
-            AppUtils.crash("Two loggers with the same name: " + logger.getName());
+            // join loggers
+            Logger oldLogger = loggers.get(logger.getName());
+            for (String key : logger.getParams().keySet()) {
+                oldLogger.addParam(key, logger.getParams().get(key));
+            }
+            for (String appenderName : logger.getAppenderNames()) {
+                oldLogger.addAppenderName(appenderName);
+            }
+            oldLogger.setAdditivity(logger.getAdditivity());
+            oldLogger.setLoggerLevel(logger.getLoggerLevel());
         }
     }
 
@@ -232,6 +241,7 @@ public class Configuration {
         
         // verify Threshold
         if (!Level.toLevel(threshold).toString().equalsIgnoreCase(threshold)) {
+            if (threshold != null && !"null".equals(threshold))
             AppUtils.crash("Configuration treshold is not correctly set: " + threshold);
         }
 

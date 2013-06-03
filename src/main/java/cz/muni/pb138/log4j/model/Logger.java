@@ -100,11 +100,7 @@ public class Logger {
     }
     
     public void addParam(String key, String value){
-        if(params.get(key) == null){
-            params.put(key, value);
-        }else{
-            AppUtils.crash("Logger: '" + name + "' with two same params: " + key);
-        }
+        params.put(key, value);
     }
 
     public void addConfig(String value) {
@@ -282,9 +278,10 @@ public class Logger {
                 if(!"null".equalsIgnoreCase(loggerLevel.getLevel()) &&
                    !"inherited".equalsIgnoreCase(loggerLevel.getLevel()) &&     
                    !loggerLevel.checkStandardLevel(loggerLevel.getLevel()) &&
-                   "".equals(loggerLevel.getLevelClass()))  {
-                    
-                    AppUtils.crash("Level: "+ loggerLevel.getLevel() + " is not standard");
+                   "".equals(loggerLevel.getLevelClass())) {
+                    if (!(loggerLevel.getLevel().startsWith("${") && loggerLevel.getLevel().endsWith("}"))) {
+                        AppUtils.crash("Level: "+ loggerLevel.getLevel() + " is not standard");
+                    }
                 }
             }
             
@@ -372,6 +369,8 @@ public class Logger {
 
         private boolean checkStandardLevel(String level){
                 if (Level.toLevel(level).toString().equalsIgnoreCase(level)) {
+                    return true;
+                } else if ((level.startsWith("${")) && (level.endsWith("}"))) {
                     return true;
                 }
                 return false;
