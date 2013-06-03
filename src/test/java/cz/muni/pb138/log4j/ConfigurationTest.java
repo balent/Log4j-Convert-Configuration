@@ -210,13 +210,6 @@ public class ConfigurationTest {
             }
         }
         
-        assertEquals(patternConfiguration1.getRootLogger().getAppenderNames(), configuration.getRootLogger().getAppenderNames());
-        assertEquals(patternConfiguration1.getRootLogger().getParams(), configuration.getRootLogger().getParams());
-        assertEquals(patternConfiguration1.getRootLogger().getName(), configuration.getRootLogger().getName());
-        assertEquals(patternConfiguration1.getRootLogger().getAdditivity(), configuration.getRootLogger().getAdditivity());
-        assertEquals(patternConfiguration1.getRootLogger().getLoggerLevel(), configuration.getRootLogger().getLoggerLevel());
-        assertEquals(patternConfiguration1.getRootLogger().getLoggerClass(), configuration.getRootLogger().getLoggerClass());
-        assertEquals(patternConfiguration1.getRootLogger(), configuration.getRootLogger());
         assertEquals(patternConfiguration1, configuration);
     }
 }

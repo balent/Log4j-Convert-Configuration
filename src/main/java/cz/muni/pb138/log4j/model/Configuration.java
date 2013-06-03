@@ -429,15 +429,15 @@ public class Configuration {
         if (this.rootLogger != other.rootLogger && (this.rootLogger == null || !this.rootLogger.equals(other.rootLogger))) {
             return false;
         }
-        /*if (this.threshold != other.threshold && (this.threshold == null || !this.threshold.equals(other.threshold))) {
+        if (this.threshold != other.threshold && (this.threshold == null || !this.threshold.equalsIgnoreCase(other.threshold))) {
             return false;
-        }*/
+        }
         if (this.debug != other.debug && (this.debug == null || !this.debug.equals(other.debug))) {
             return false;
         }
-        /*if (this.reset != other.reset && (this.reset == null || !this.reset.equals(other.reset))) {
+        if (this.reset != other.reset && (this.reset == null || !this.reset.equals(other.reset))) {
             return false;
-        }*/
+        }
         if (this.throwableRenderer != other.throwableRenderer && (this.throwableRenderer == null || !this.throwableRenderer.equals(other.throwableRenderer))) {
             return false;
         }
