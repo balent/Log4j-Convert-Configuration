@@ -81,10 +81,10 @@ public class Renderer {
             return false;
         }
         final Renderer other = (Renderer) obj;
-        if ((this.renderedClass == null) ? (other.renderedClass != null) : !this.renderedClass.equalsIgnoreCase(other.renderedClass)) {
+        if ((this.renderedClass == null) ? (other.renderedClass != null) : !this.renderedClass.equals(other.renderedClass)) {
             return false;
         }
-        if ((this.renderingClass == null) ? (other.renderingClass != null) : !this.renderingClass.equalsIgnoreCase(other.renderingClass)) {
+        if ((this.renderingClass == null) ? (other.renderingClass != null) : !this.renderingClass.equals(other.renderingClass)) {
             return false;
         }
         return true;

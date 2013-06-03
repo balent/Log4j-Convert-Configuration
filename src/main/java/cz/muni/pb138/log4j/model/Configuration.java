@@ -28,6 +28,14 @@ public class Configuration {
     private ThrowableRenderer throwableRenderer;
     private LoggerFactory loggerFactory;
 
+    public String getWideThreshold() {
+        return wideThreshold;
+    }
+
+    public void setWideThreshold(String wideThreshold) {
+        this.wideThreshold = wideThreshold;
+    }
+    
     public LoggerFactory getLoggerFactory() {
         return loggerFactory;
     }
@@ -389,11 +397,17 @@ public class Configuration {
             setRootLogger(rootLogger);
         }
     }
-    
 
     @Override
     public int hashCode() {
         int hash = 3;
+        hash = 43 * hash + (this.renderers != null ? this.renderers.hashCode() : 0);
+        hash = 43 * hash + (this.loggers != null ? this.loggers.hashCode() : 0);
+        hash = 43 * hash + (this.appenders != null ? this.appenders.hashCode() : 0);
+        hash = 43 * hash + (this.rootLogger != null ? this.rootLogger.hashCode() : 0);
+        hash = 43 * hash + (this.debug != null ? this.debug.hashCode() : 0);
+        hash = 43 * hash + (this.throwableRenderer != null ? this.throwableRenderer.hashCode() : 0);
+        hash = 43 * hash + (this.loggerFactory != null ? this.loggerFactory.hashCode() : 0);
         return hash;
     }
 
@@ -418,18 +432,15 @@ public class Configuration {
         if (this.rootLogger != other.rootLogger && (this.rootLogger == null || !this.rootLogger.equals(other.rootLogger))) {
             return false;
         }
-        if (this.threshold != other.threshold && (this.threshold == null || !this.threshold.equals(other.threshold))) {
+        /*if (this.threshold != other.threshold && (this.threshold == null || !this.threshold.equals(other.threshold))) {
             return false;
-        }
+        }*/
         if (this.debug != other.debug && (this.debug == null || !this.debug.equals(other.debug))) {
             return false;
         }
-        if (this.reset != other.reset && (this.reset == null || !this.reset.equals(other.reset))) {
+        /*if (this.reset != other.reset && (this.reset == null || !this.reset.equals(other.reset))) {
             return false;
-        }
-        if ((this.wideThreshold == null) ? (other.wideThreshold != null) : !this.wideThreshold.equals(other.wideThreshold)) {
-            return false;
-        }
+        }*/
         if (this.throwableRenderer != other.throwableRenderer && (this.throwableRenderer == null || !this.throwableRenderer.equals(other.throwableRenderer))) {
             return false;
         }
