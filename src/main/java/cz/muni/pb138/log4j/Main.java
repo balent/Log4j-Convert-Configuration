@@ -1,5 +1,6 @@
 package cz.muni.pb138.log4j;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 
@@ -88,17 +89,27 @@ public class Main {
             AppUtils.crash("Input file doesn't exist");
         }
         
-        if (outputFile.exists()) {
-            // ask confirmation
-            // do you want to rewrite file?
+        Console c = System.console();
+        if (c == null) {
+            System.err.println("Run application from command line.");
+            System.exit(1);
+        }
+        
+        while(outputFile.exists()) {
+            String rewrite = c.readLine("File " + outputFile.getName() + " already exist. Rewrite it? yes/no (yes): ");
+            if (rewrite.toLowerCase().equals("no") || rewrite.toLowerCase().equals("n")) {
+                String fileName = c.readLine("Enter output file name: ");
+                outputFile = new File(outputFile.getParent(), fileName);
+            } else {
+                break;
+            }
         }
 
         try {
             converter.convert(inputFile, outputFile);
-        } catch (IOException ex) {
-            log.error(ex.getMessage());
-            log.debug(ex.getMessage(), ex);
-            AppUtils.crash("Input file doesn't exist",ex);
+        } catch (Exception ex) {
+            System.out.println("Conversion failed.");
+            System.exit(1);
         }
         
         System.out.println("File successfully converted");
@@ -107,6 +118,6 @@ public class Main {
     private static void displayHelpAndExit(Options options, int exitValue) {
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("log4j-convert", options);
-        AppUtils.crash("Wrong options");
+        System.exit(1);
     }
 }

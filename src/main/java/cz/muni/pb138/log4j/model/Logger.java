@@ -3,6 +3,7 @@ package cz.muni.pb138.log4j.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
@@ -136,12 +137,12 @@ public class Logger {
         }
     }
 
-    public Element addThisToElement(Element rootElement) {
+    public Element toXmlElement() {
         Element loggerElement = null;
         if (isRootLogger) {
-            loggerElement = rootElement.addElement("root");
+            loggerElement = DocumentFactory.getInstance().createElement("root");
         } else {
-            loggerElement = rootElement.addElement("logger");
+            loggerElement = DocumentFactory.getInstance().createElement("logger");
         }
         if (name != null) { // root element doesn't have name
             loggerElement.addAttribute("name", name);
@@ -161,7 +162,7 @@ public class Logger {
             Element appenderElement = loggerElement.addElement("appender-ref");
             appenderElement.addAttribute("ref", appenderName);
         }
-        return rootElement;
+        return loggerElement;
     }
     
     public void setUpFromElement(Element element){

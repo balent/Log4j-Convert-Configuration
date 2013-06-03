@@ -23,19 +23,18 @@ public class PropsToXmlConverter implements Converter {
 
     private static Logger log = Logger.getLogger(PropsToXmlConverter.class);
     
-    public void convert(File sourceFile, File outputFile) throws FileNotFoundException, UnsupportedEncodingException, IOException{
+    public void convert(File sourceFile, File outputFile) throws Exception {
         FileInputStream fis = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(outputFile);
         
-        convert(fis,out);
+        convert(fis, out);
     }
 
-    public void convert(InputStream inputStream, OutputStream outputStream) throws FileNotFoundException, UnsupportedEncodingException, IOException{
-        FileInputStream fis = (FileInputStream) inputStream;
+    public void convert(InputStream inputStream, OutputStream outputStream) throws Exception {
 
         Properties properties = new Properties();
         try {
-            properties.load(fis);
+            properties.load(inputStream);
         } catch (Exception ex) {
             log.error("Provided file is not in valid property format.");
             AppUtils.crash("Provided file is not in valid property format.");
@@ -45,11 +44,11 @@ public class PropsToXmlConverter implements Converter {
         Configuration configuration = new Configuration();
 
         for (String propertyKey : properties.stringPropertyNames()) {
-            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
-            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            String key = propertyKey.toLowerCase();                     
+            String value = properties.getProperty(propertyKey).toLowerCase();   
             // TODO: value moze obsahovat aj premennu vo ${} vyraze, tato premenna je definovana sposobom 
             // nazovPremennej = hodnota.
-            if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
+            if (key.toLowerCase().startsWith("log4j")) {
                 String newKey = key.substring(6); // remove initial "log4j."
                 configuration.addConfig(newKey, value);
             } else {

@@ -21,14 +21,14 @@ public class XmlToPropsConverter implements Converter {
     private Configuration configuration;
     
 
-    public void convert(File sourceFile, File outputFile) throws FileNotFoundException, UnsupportedEncodingException, IOException{
+    public void convert(File sourceFile, File outputFile) throws Exception {
         FileInputStream fis = new FileInputStream(sourceFile);
         FileOutputStream out = new FileOutputStream(outputFile);
         
         convert(fis,out);
     }
     
-    public void convert(InputStream inputStream, OutputStream outputStream) throws FileNotFoundException, UnsupportedEncodingException, IOException{
+    public void convert(InputStream inputStream, OutputStream outputStream) throws Exception {
         DtdValidator dtdValidator = new DtdValidator(inputStream);
         
         Document document = dtdValidator.validate();

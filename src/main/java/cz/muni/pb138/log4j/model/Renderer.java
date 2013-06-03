@@ -6,6 +6,8 @@ package cz.muni.pb138.log4j.model;
 
 import cz.muni.pb138.log4j.AppUtils;
 import java.util.List;
+
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 /**
@@ -33,11 +35,11 @@ public class Renderer {
         this.renderingClass = renderingClass;
     }
     
-    public Element addThisToElement(Element rootElement) {
-        Element rendererElement = rootElement.addElement("renderer");
+    public Element toXmlElement() {
+        Element rendererElement = DocumentFactory.getInstance().createElement("renderer");
         rendererElement.addAttribute("renderedClass", getRenderedClass());
         rendererElement.addAttribute("renderingClass", getRenderingClass());
-        return rootElement;
+        return rendererElement;
     }
     
     public void setUpFromElement(Element element){

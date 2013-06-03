@@ -8,6 +8,8 @@ import cz.muni.pb138.log4j.AppUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 /**
@@ -34,15 +36,15 @@ public class ThrowableRenderer {
         this.className = className;
     }
     
-    public Element addThisToElement(Element rootElement) {
-        Element throwableRendererElement = rootElement.addElement("throwableRenderer");
+    public Element toXmlElement() {
+        Element throwableRendererElement = DocumentFactory.getInstance().createElement("throwableRenderer");
         throwableRendererElement.addAttribute("class", className);
         for(String param : params.keySet()) {
             Element paramElement = throwableRendererElement.addElement("param");
             paramElement.addAttribute("name", param);
             paramElement.addAttribute("value", params.get(param));
         }
-        return rootElement;
+        return throwableRendererElement;
     }
     
     public void setUpFromElement(Element element){
@@ -54,8 +56,7 @@ public class ThrowableRenderer {
     }
     
     public List<String> toProperty(List<String> prop, String prefix) {
-        prefix = (prefix != "") ? prefix + "." : prefix;
-        
+        prefix = (!"".equals(prefix)) ? prefix + "." : prefix;
        
         prop.add(AppUtils.prefix(prefix + "throwableRenderer = " + className));
         AppUtils.addParams(prop, prefix + "throwableRenderer", params);

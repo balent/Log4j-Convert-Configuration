@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
 public interface Converter {
-    public void convert(File sourceFile, File outputFile) throws FileNotFoundException, UnsupportedEncodingException, IOException;
+    public void convert(File sourceFile, File outputFile) throws Exception;
     
-    public void convert(InputStream inputStream, OutputStream outputStream) throws FileNotFoundException, UnsupportedEncodingException, IOException;
+    public void convert(InputStream inputStream, OutputStream outputStream) throws Exception;
 }

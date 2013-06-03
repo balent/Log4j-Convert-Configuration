@@ -3,6 +3,7 @@ package cz.muni.pb138.log4j.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 import cz.muni.pb138.log4j.AppUtils;
@@ -186,8 +187,8 @@ public class Appender {
         }
     }
 
-    public Element addThisToElement(Element rootElement) {
-        Element appenderElement = rootElement.addElement("appender");
+    public Element toXmlElement() {
+        Element appenderElement = DocumentFactory.getInstance().createElement("appender");
         appenderElement.addAttribute("name", name);
         appenderElement.addAttribute("class", className);
 
@@ -227,7 +228,7 @@ public class Appender {
                 layoutParamElement.addAttribute("value", layoutParams.get(layoutParamKey));
             }
         }
-        return rootElement;
+        return appenderElement;
     }
 
     public void setUpFromElement(Element element) {

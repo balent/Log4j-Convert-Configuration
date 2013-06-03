@@ -220,7 +220,6 @@ public class Configuration {
             rootLogger.verify();
         }
 
-
         if (wideThreshold != null && wideThreshold.contains(" ")) {
             AppUtils.crash("Wide treshold contains a space");
         }
@@ -236,19 +235,19 @@ public class Configuration {
         }
 
         for (Renderer renderer : renderers.values()) {
-            renderer.addThisToElement(rootElement);
+            rootElement.add(renderer.toXmlElement());
         }
         if(throwableRenderer != null) {
-            throwableRenderer.addThisToElement(rootElement);
+            rootElement.add(throwableRenderer.toXmlElement());
         }
         for (Appender appender : appenders.values()) {
-            appender.addThisToElement(rootElement);
+            rootElement.add(appender.toXmlElement());
         }
         for (Logger logger : loggers.values()) {
-            logger.addThisToElement(rootElement);
+            rootElement.add(logger.toXmlElement());
         }
         if (rootLogger != null) {
-            rootLogger.addThisToElement(rootElement);
+            rootElement.add(rootLogger.toXmlElement());
         }
         return document;
     }
@@ -259,25 +258,23 @@ public class Configuration {
         //root element at first   
 
         if (rootLogger != null && rootLogger.isRootLogger()) {
-                rootLogger.toProperty(prop);
+            rootLogger.toProperty(prop);
         }
 
         //loggers
-        for (cz.muni.pb138.log4j.model.Logger logger : loggers.values()) {
+        for (Logger logger : loggers.values()) {
             if (!logger.isRootLogger()) {
                 logger.toProperty(prop);
             }
         }
 
         //appenders
-        for (cz.muni.pb138.log4j.model.Appender appender : appenders.values()) {
+        for (Appender appender : appenders.values()) {
             appender.toProperty(prop);
-
         }
         //renderers
-        for (cz.muni.pb138.log4j.model.Renderer renderer : renderers.values()) {
+        for (Renderer renderer : renderers.values()) {
             renderer.toProperty(prop);
-
         }
 
         //another params
@@ -300,6 +297,7 @@ public class Configuration {
         if (throwableRenderer != null) {
             throwableRenderer.toProperty(prop, "");
         }
+
         if (loggerFactory != null) {
             loggerFactory.toProperty(prop, "");
         }
@@ -358,7 +356,6 @@ public class Configuration {
             addLogger(logger);
         }
 
-
         if (rootElement.element("loggerFactory") != null) {
             LoggerFactory loggerFactory = new LoggerFactory();
             loggerFactory.setUpFromElement(rootElement.element("loggerFactory"));
@@ -370,6 +367,7 @@ public class Configuration {
             setRootLogger(rootLogger);
         }
     }
+    
 
     @Override
     public int hashCode() {
@@ -418,4 +416,5 @@ public class Configuration {
         }
         return true;
     }
+
 }

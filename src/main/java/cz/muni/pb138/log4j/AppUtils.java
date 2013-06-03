@@ -27,7 +27,7 @@ public class AppUtils {
     public static void crash(String errorMessage, Exception exception) {
         log.error(errorMessage);
         log.debug(errorMessage, exception);
-        throw new RuntimeException(errorMessage,exception);
+        throw new RuntimeException(errorMessage, exception);
     }
     
     public static String prefix(String str) {
