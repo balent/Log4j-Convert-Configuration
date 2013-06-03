@@ -44,8 +44,8 @@ public class PropsToXmlConverter implements Converter {
         Configuration configuration = new Configuration();
 
         for (String propertyKey : properties.stringPropertyNames()) {
-            String key = propertyKey.toLowerCase();                     
-            String value = properties.getProperty(propertyKey).toLowerCase();   
+            String key = propertyKey;                     
+            String value = properties.getProperty(propertyKey);   
             // TODO: value moze obsahovat aj premennu vo ${} vyraze, tato premenna je definovana sposobom 
             // nazovPremennej = hodnota.
             if (key.toLowerCase().startsWith("log4j")) {

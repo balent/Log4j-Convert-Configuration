@@ -281,8 +281,8 @@ public class Logger {
             }
             
             if(loggerLevel != null) {
-                if(!"null".equals(loggerLevel.getLevel().toLowerCase()) &&
-                   !"inherited".equals(loggerLevel.getLevel().toLowerCase()) &&     
+                if(!"null".equalsIgnoreCase(loggerLevel.getLevel()) &&
+                   !"inherited".equalsIgnoreCase(loggerLevel.getLevel()) &&     
                    !loggerLevel.checkStandardLevel(loggerLevel.getLevel()) &&
                    "".equals(loggerLevel.getLevelClass()))  {
                     

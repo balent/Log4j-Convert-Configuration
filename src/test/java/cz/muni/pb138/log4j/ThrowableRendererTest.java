@@ -115,8 +115,8 @@ public class ThrowableRendererTest {
         Configuration configuration = new Configuration();
 
         for (String propertyKey : properties.stringPropertyNames()) {
-            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
-            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            String key = propertyKey;                     
+            String value = properties.getProperty(propertyKey);   
             if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
                 String newKey = key.substring(6); // remove initial "log4j."
                 configuration.addConfig(newKey, value);

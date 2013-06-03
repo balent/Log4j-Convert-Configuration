@@ -21,7 +21,7 @@ public class Configuration {
     private Map<String, Logger> loggers = new HashMap<String, Logger>();
     private Map<String, Appender> appenders = new HashMap<String, Appender>();
     private Logger rootLogger;
-    private Level threshold; // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
+    private String threshold; // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
     private Boolean debug;
     private Boolean reset;
     private String wideThreshold;
@@ -88,7 +88,7 @@ public class Configuration {
         return rootLogger;
     }
 
-    public Level getThreshold() { // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
+    public String getThreshold() { // FOR MARTIN: Threshold nahradeny za org.apache.log4j.Level;
         return threshold;
     }
 
@@ -121,17 +121,13 @@ public class Configuration {
     }
 
     public void setThreshold(String threshold) {
-        try {
-            this.threshold = Level.toLevel(threshold); // FOR MARTIN: Nahrada za this.threshold = Threshold.valueOf(threshold)
-        } catch (Exception ex) {
-            AppUtils.crash("You have specified wrong configuration threshold", ex);
-        }
+        this.threshold = threshold;
     }
 
     public void addConfig(String key, String value) {
         if (key.equals("debug")) {
             setDebug(value);
-        } else if (key.startsWith("logger")) {
+        } else if (key.toLowerCase().startsWith("logger")) {
             String loggerName = key.substring(7);   // logger names often contain "."
             Logger logger = loggers.get(loggerName);
             if (logger == null) {
@@ -140,13 +136,13 @@ public class Configuration {
                 loggers.put(loggerName, logger);
             }
             logger.addConfig(value);
-        } else if (key.startsWith("rootlogger")) {
+        } else if (key.toLowerCase().startsWith("rootlogger")) {
             if (rootLogger == null) {
                 rootLogger = new Logger();
                 rootLogger.setRootLogger(true);
             }
             rootLogger.addConfig(value);
-        } else if (key.startsWith("appender")) {
+        } else if (key.toLowerCase().startsWith("appender")) {
             String newKey = key.substring(9);
             String appenderName = newKey.split("\\.")[0];
             Appender appender = appenders.get(appenderName);
@@ -156,7 +152,7 @@ public class Configuration {
                 appenders.put(appenderName, appender);
             }
             appender.addConfig(newKey, value);
-        } else if (key.startsWith("additivity")) {
+        } else if (key.toLowerCase().startsWith("additivity")) {
             String loggerName = key.substring(11);
             Logger logger = loggers.get(loggerName);
             if (logger == null) {
@@ -169,19 +165,19 @@ public class Configuration {
             } else {
                 logger.setAdditivity(value);
             }
-        } else if (key.equals("threshold")) {
+        } else if (key.toLowerCase().equals("threshold")) {
             try {
                 wideThreshold = Level.toLevel(value).toString(); // FOR MARTIN: Nahrada za wideThreshold = Threshold.valueOf(value).toString()
             } catch (IllegalArgumentException ex) {
                 AppUtils.crash("Wrong hierarchy-wide threshold has been given.", ex);
             }
-        } else if (key.startsWith("renderer")) {
+        } else if (key.toLowerCase().startsWith("renderer")) {
             String fullClassName = key.substring(9);
             Renderer renderer = new Renderer();
             renderer.setRenderingClass(value);
             renderer.setRenderedClass(fullClassName);
             addRenderer(renderer);
-        } else if (key.startsWith("throwableRenderer") || key.startsWith("throwablerenderer")) {
+        } else if (key.toLowerCase().startsWith("throwablerenderer")) {
             if (throwableRenderer == null) {                    // max. one throwableRenderrer possible
                 throwableRenderer = new ThrowableRenderer();
             }
@@ -203,6 +199,13 @@ public class Configuration {
         // verify appenders + layouts
         for (Appender appender : appenders.values()) {
             appender.verify();
+        }
+        
+        // verify threshold
+        try {
+            Level.toLevel(threshold);
+        } catch (Exception ex) {
+            AppUtils.crash("You have specified wrong configuration threshold", ex);
         }
 
         //renderers
@@ -233,11 +236,11 @@ public class Configuration {
         Element rootElement = document.addElement("log4j:configuration");
         rootElement.addNamespace("log4j", "http://jakarta.apache.org/log4j/");
         if (debug != null) {
-            rootElement.addAttribute("debug", String.valueOf(debug).toLowerCase());
+            rootElement.addAttribute("debug", String.valueOf(debug));
         }
         
         if (wideThreshold != null) {
-            rootElement.addAttribute("threshold", wideThreshold.toLowerCase());
+            rootElement.addAttribute("threshold", wideThreshold);
         }
 
         for (Renderer renderer : renderers.values()) {
@@ -286,7 +289,7 @@ public class Configuration {
         //another params
 
         if (threshold != null) {
-            prop.add(AppUtils.prefix("threshold = " + threshold.toString().toLowerCase()));
+            prop.add(AppUtils.prefix("threshold = " + threshold));
         }
         if (debug != null) {
             prop.add(AppUtils.prefix("debug = " + debug));
@@ -319,21 +322,21 @@ public class Configuration {
         if (thresholdAtt != null) {
 
             if (!thresholdAtt.equalsIgnoreCase("null")) {
-                thresholdAtt = thresholdAtt.toLowerCase(Locale.ENGLISH);
+                thresholdAtt = thresholdAtt;
                 setThreshold(thresholdAtt);
             }
         }
 
         if (debugAtt != null) {
             if (!debugAtt.equalsIgnoreCase("null")) {
-                debugAtt = debugAtt.toLowerCase(Locale.ENGLISH);
+                debugAtt = debugAtt;
                 setDebug(debugAtt);
             }
         }
 
         if (resetAtt != null) {
             if (!resetAtt.equalsIgnoreCase("null")) {
-                resetAtt = resetAtt.toLowerCase(Locale.ENGLISH);
+                resetAtt = resetAtt;
                 setReset(resetAtt);
             }
         }

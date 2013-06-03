@@ -133,7 +133,7 @@ public class Appender {
             className = value;
         } else {
             String newKey = key.substring(name.length() + 1); // removing appenderName. from key
-            if (newKey.startsWith("layout")) {
+            if (newKey.toLowerCase().startsWith("layout")) {
                 // each appender has max. one "private" layout
                 String layout = newKey.substring(6);      // removing "layout" part without "."
                 if (layout.contains(".")) {
@@ -145,7 +145,7 @@ public class Appender {
                     layoutClassName = value;
                     hasLayoutAlready = true;
                 }
-            } else if (newKey.startsWith("errorhandler")) {
+            } else if (newKey.toLowerCase().startsWith("errorhandler")) {
                 if (errorHandler == null) {
                     errorHandler = new ErrorHandler();      // there is only one for each appender
                 }
@@ -353,7 +353,7 @@ public class Appender {
             
             for (String key: layoutParams.keySet()) {
                 if (!checkLayoutParamSuported(key)) {
-                    AppUtils.crash("Unsuported layout param: " + key + " in layout: " + layoutClassName);
+                    AppUtils.crash("Unsupported layout param: " + key + " in layout: " + layoutClassName);
                 }
             }
 
@@ -381,7 +381,7 @@ public class Appender {
             String key = param.getKey();
             
             if (!checkParamSuported(key)) {
-                AppUtils.crash("Unsuported param: " + key + " in appender: " + name);
+                AppUtils.crash("Unsupported param: " + key + " in appender: " + name);
             }
             
             
