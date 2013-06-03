@@ -126,6 +126,8 @@ public class Configuration {
     public void addConfig(String key, String value) {
         if (key.equals("debug")) {
             setDebug(value);
+        } else if (key.equals("reset")) { 
+            setReset(value);
         } else if (key.toLowerCase().startsWith("loggerfactory")) {
             if (loggerFactory == null) {
                 loggerFactory = new LoggerFactory();
@@ -249,6 +251,10 @@ public class Configuration {
         
         if (threshold != null) {
             rootElement.addAttribute("threshold", threshold.toLowerCase());
+        }
+        
+        if (reset != null) {
+            rootElement.addAttribute("reset", reset.toString().toLowerCase());
         }
 
         for (Renderer renderer : renderers.values()) {
