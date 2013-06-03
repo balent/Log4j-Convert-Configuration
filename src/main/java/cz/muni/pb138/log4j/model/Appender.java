@@ -89,12 +89,7 @@ public class Appender {
     }
 
     public void addLayoutParam(String key, String value) {
-        if (!checkLayoutParamSuported(key)) {
-            AppUtils.crash("Unsuported layout param: " + key + " in layout: " + layoutClassName);
-        }
-
         if (layoutParams.get(key) == null) {
-            checkLayoutParamSuported(key);
             layoutParams.put(key, value);
         } else {
             AppUtils.crash("Appender: '" + name + "' with two same layout params: " + key);
@@ -106,11 +101,6 @@ public class Appender {
     }
 
     public void addParam(String key, String value) {
-
-        if (!checkParamSuported(key)) {
-            AppUtils.crash("Unsuported param: " + key + " in appender: " + name);
-        }
-
         if (params.get(key) == null) {
             params.put(key, value);
         } else {
@@ -349,12 +339,22 @@ public class Appender {
         if (name.contains(" ")) {
             AppUtils.crash("Appender name " + name + " contanins a space");
         }
+        
+        if ((className == null) || ("".equals(className)) || (className.contains(" "))) {
+            AppUtils.crash("Appender " + name + " contains incorrect class name: " + className);
+        }
 
         // verify layouts
         if (layoutClassName != null) {
             //containing space
             if (layoutClassName.contains(" ")) {
                 AppUtils.crash("Appender's class name " + name + " contanins a space - layoutClassName: " + layoutClassName);
+            }
+            
+            for (String key: layoutParams.keySet()) {
+                if (!checkLayoutParamSuported(key)) {
+                    AppUtils.crash("Unsuported layout param: " + key + " in layout: " + layoutClassName);
+                }
             }
 
             //checking name
@@ -377,7 +377,14 @@ public class Appender {
         }
 
         for (Map.Entry<String, String> param : params.entrySet()) {
-
+            
+            String key = param.getKey();
+            
+            if (!checkParamSuported(key)) {
+                AppUtils.crash("Unsuported param: " + key + " in appender: " + name);
+            }
+            
+            
             //threshold
             if (param.getKey().equals("threshold")) {
                 try {
@@ -389,7 +396,17 @@ public class Appender {
                 //other params than threshold (common for every appender)
                 try {
                     boolean paramFound = false;
-                    for (String paramName : AppenderParams.valueOf(name).getParams()) {
+                    
+                    String log4jShortClassName = "customtype";
+                    
+                    if (className.startsWith("org.apache.log4j.")) {
+                        String[] classNameArr = className.split("\\.");
+                        if (classNameArr.length == 4) {
+                                log4jShortClassName = classNameArr[3].toLowerCase();
+                        }
+                    }
+                    
+                    for (String paramName : AppenderParams.valueOf(log4jShortClassName).getParams()) {
                         if (paramName.equalsIgnoreCase(param.getKey())) {
                             paramFound = true;
                             // checking validity of values (only where possible to check)

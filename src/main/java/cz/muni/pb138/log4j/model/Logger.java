@@ -185,9 +185,11 @@ public class Logger {
         }
         //TODO zistit co to ma robit ked nie je uvedeny level
         if(element.element("level") != null){
-            
             loggerLevel = new LoggerLevel();
             loggerLevel.setUpFromElement(element.element("level"));
+        } else if(element.element("priority") != null) {
+            loggerLevel = new LoggerLevel();
+            loggerLevel.setUpFromElement(element.element("priority"));
         }
         
         
@@ -262,8 +264,6 @@ public class Logger {
                 }
             }
         }
-        
-        
         
         return prop;
     }
