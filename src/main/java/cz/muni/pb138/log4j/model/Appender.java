@@ -637,6 +637,10 @@ public class Appender {
             if (element.element("appender-ref") != null) {
                 appender = element.element("appender-ref").attributeValue("ref");
             }
+            
+            if (element.elements("root-ref").size() != 0) {
+                root = true;
+            }
 
         }
 
