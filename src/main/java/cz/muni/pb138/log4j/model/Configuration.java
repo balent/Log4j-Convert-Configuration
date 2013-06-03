@@ -377,6 +377,12 @@ public class Configuration {
             logger.setUpFromElement(e);
             addLogger(logger);
         }
+        
+        for (Element e : (List<Element>) rootElement.elements("category")) {
+            cz.muni.pb138.log4j.model.Logger logger = new cz.muni.pb138.log4j.model.Logger();
+            logger.setUpFromElement(e);
+            addLogger(logger);
+        }
 
         if (rootElement.element("loggerFactory") != null) {
             LoggerFactory loggerFactory = new LoggerFactory();

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.log4j.Level;
-import org.apache.log4j.lf5.LogLevel;
 
 public class Logger {
 
@@ -372,13 +371,10 @@ public class Logger {
         }
 
         private boolean checkStandardLevel(String level){
-            try{
-                LogLevel.valueOf(level.toUpperCase(Locale.ENGLISH));
-                return true;
-            }catch(Exception e)
-            {
+                if (Level.toLevel(level).toString().equalsIgnoreCase(level)) {
+                    return true;
+                }
                 return false;
-            }
         }
 
         @Override

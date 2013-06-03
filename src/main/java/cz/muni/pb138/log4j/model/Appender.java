@@ -229,6 +229,11 @@ public class Appender {
                 layoutParamElement.addAttribute("value", layoutParams.get(layoutParamKey));
             }
         }
+        
+        for (String appenderRef : appenderRefs) {
+            Element appenderRefElement = appenderElement.addElement("appender-ref");
+            appenderRefElement.addAttribute("ref", appenderRef);
+        }
         return appenderElement;
     }
 
