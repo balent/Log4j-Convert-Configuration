@@ -31,7 +31,8 @@ import org.junit.Test;
  * @author jozef
  */
 public class LoggerTest {
-    private Logger patternLogger;
+    private Logger patternLogger;    
+    private Logger patternLoggerNoParam;
     private Logger testLogger;
     private List<String> patternLoggerProp;
 
@@ -74,6 +75,8 @@ public class LoggerTest {
         patternLogger = CreateLogger("com.google.name",params,apps,"false","",false);
         patternLogger.setLoggerLevel(patternLogger.CreateLoggerLevel("WARN", null, ""));
         
+        patternLoggerNoParam = CreateLogger("fi.muni.cz.Logger", null, apps, "true", "", false);
+        patternLoggerNoParam.setLoggerLevel(patternLoggerNoParam.CreateLoggerLevel("ERROR", null, ""));
         
         patternLoggerProp = new ArrayList<String>();
         patternLoggerProp.add("log4j.logger.com.google.name = WARN, appendJedna, appendDva");
@@ -181,7 +184,7 @@ public class LoggerTest {
         }
         
         assertEquals(1, configuration.getLoggers().size());
-        Logger outLogger = configuration.getLoggers().get("com.google.name");
-        assertEquals(patternLogger, outLogger);
+        Logger outLogger = configuration.getLoggers().get("fi.muni.cz.Logger");
+        assertEquals(patternLoggerNoParam, outLogger);
     }
 }
