@@ -36,7 +36,7 @@ public class LoggerFactoryTest {
         patternLoggerFactory = new LoggerFactory();
         patternLoggerFactory.setClassName("com.my.log.MyLoggerFactory");
         patternLoggerFactory.addParam("messageBundle", "MyLoggerBundle");
-        patternLoggerFactory.addParam("xyz", "XYZ");        
+        patternLoggerFactory.addParam("xyz", "XYZ");
         
         patternLoggerFactoryProp = new ArrayList<String>();
         patternLoggerFactoryProp.add("log4j.loggerFactory = com.my.log.MyLoggerFactory");
@@ -77,7 +77,12 @@ public class LoggerFactoryTest {
     @Test
     public void verifyTest() {
         testLoggerFactory = new LoggerFactory();
-        testLoggerFactory.verify();
+        try {
+            testLoggerFactory.verify(); // LoggerFactory class name is required
+            fail();
+        }catch(RuntimeException ex) {
+            //good
+        }
         
         testLoggerFactory.setClassName("com.my.log.MyLoggerFactory ");
         try {
@@ -105,8 +110,8 @@ public class LoggerFactoryTest {
         Configuration configuration = new Configuration();
 
         for (String propertyKey : properties.stringPropertyNames()) {
-            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
-            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            String key = propertyKey;                     
+            String value = properties.getProperty(propertyKey);   
             if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
                 String newKey = key.substring(6); // remove initial "log4j."
                 configuration.addConfig(newKey, value);

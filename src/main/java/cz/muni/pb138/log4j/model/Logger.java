@@ -178,7 +178,6 @@ public class Logger {
             name = element.attributeValue("name");
             
             additivity = element.attributeValue("additivity");
-            System.out.println("additivity " + additivity);
         }
         
         // TODO, zistit zoznam moznych parametrov pre logger

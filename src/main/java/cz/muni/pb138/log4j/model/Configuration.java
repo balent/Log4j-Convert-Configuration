@@ -127,6 +127,16 @@ public class Configuration {
     public void addConfig(String key, String value) {
         if (key.equals("debug")) {
             setDebug(value);
+        } else if (key.toLowerCase().startsWith("loggerfactory")) {
+            if (loggerFactory == null) {
+                loggerFactory = new LoggerFactory();
+            }
+            if (key.equalsIgnoreCase("loggerfactory")) {
+                loggerFactory.setClassName(value);
+            } else {
+                String newKey = key.substring(14);
+                loggerFactory.addParam(newKey, value);
+            }
         } else if (key.toLowerCase().startsWith("logger")) {
             String loggerName = key.substring(7);   // logger names often contain "."
             Logger logger = loggers.get(loggerName);
@@ -257,6 +267,9 @@ public class Configuration {
         }
         if (rootLogger != null) {
             rootElement.add(rootLogger.toXmlElement());
+        }
+        if (loggerFactory != null) {
+            rootElement.add(loggerFactory.toXmlElement());
         }
         return document;
     }

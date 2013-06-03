@@ -8,6 +8,9 @@ import cz.muni.pb138.log4j.AppUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.dom4j.Attribute;
+import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 
 /**
@@ -36,7 +39,6 @@ public class LoggerFactory {
         for(Element e : (List<Element>) element.elements("param")){
             addParam(e.attributeValue("name"), e.attributeValue("value"));
         }
-        
     }
     public List<String> toProperty(List<String> prop, String prefix) {
         prefix = (!"".equals(prefix)) ? prefix + "." : prefix;
@@ -48,6 +50,9 @@ public class LoggerFactory {
     }
     
     public void verify() {
+        if (className == null) {
+            AppUtils.crash("Logger factory class name is empty.");
+        }
         if(className != null && className.contains(" ")) {
             AppUtils.crash("Logger factory: " + className + " contains a space");
         }
@@ -82,5 +87,15 @@ public class LoggerFactory {
         }
         return true;
     }
-    
+
+    public Element toXmlElement() {
+        Element appenderElement = DocumentFactory.getInstance().createElement("appender");
+        appenderElement.addAttribute("class", className);
+        for (String paramKey : params.keySet()) {
+            Element paramElement = appenderElement.addElement("param");
+            appenderElement.addAttribute("name", paramKey);
+            appenderElement.addAttribute("value", params.get(paramKey));
+        }
+        return appenderElement;
+    }
 }
