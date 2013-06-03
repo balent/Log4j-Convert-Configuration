@@ -159,6 +159,8 @@ public class Appender {
                             for (String logger : values) {
                                 errorHandler.addLogger(logger);
                             }
+                        } else {
+                            errorHandler.addLogger(value);
                         }
                     } else if (errH.substring(1).equalsIgnoreCase("root-ref")) {
                         errorHandler.setRoot(Boolean.valueOf(value));
@@ -167,6 +169,15 @@ public class Appender {
                     }
                 } else {
                     errorHandler.setClassName(value);       // className = compulsory by DTD
+                }
+            } else if (newKey.toLowerCase().startsWith("appender-ref")) {
+                if (value.contains(",")) {
+                    String[] values = value.replaceAll("\\s", "").split(",");
+                    for (String appRef : values) {
+                        addAppenderRef(appRef);
+                    }
+                } else {
+                    addAppenderRef(value);
                 }
             } else {
                 params.put(newKey, value);
@@ -217,6 +228,11 @@ public class Appender {
                 layoutParamElement.addAttribute("name", layoutParamKey);
                 layoutParamElement.addAttribute("value", layoutParams.get(layoutParamKey));
             }
+        }
+        
+        for (String appenderRef : appenderRefs) {
+            Element appenderRefElement = appenderElement.addElement("appender-ref");
+            appenderRefElement.addAttribute("ref", appenderRef);
         }
         return appenderElement;
     }
@@ -620,6 +636,10 @@ public class Appender {
 
             if (element.element("appender-ref") != null) {
                 appender = element.element("appender-ref").attributeValue("ref");
+            }
+            
+            if (element.elements("root-ref").size() != 0) {
+                root = true;
             }
 
         }
