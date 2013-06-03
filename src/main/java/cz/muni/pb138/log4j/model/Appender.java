@@ -159,6 +159,8 @@ public class Appender {
                             for (String logger : values) {
                                 errorHandler.addLogger(logger);
                             }
+                        } else {
+                            errorHandler.addLogger(value);
                         }
                     } else if (errH.substring(1).equalsIgnoreCase("root-ref")) {
                         errorHandler.setRoot(Boolean.valueOf(value));
@@ -167,6 +169,15 @@ public class Appender {
                     }
                 } else {
                     errorHandler.setClassName(value);       // className = compulsory by DTD
+                }
+            } else if (newKey.toLowerCase().startsWith("appender-ref")) {
+                if (value.contains(",")) {
+                    String[] values = value.replaceAll("\\s", "").split(",");
+                    for (String appRef : values) {
+                        addAppenderRef(appRef);
+                    }
+                } else {
+                    addAppenderRef(value);
                 }
             } else {
                 params.put(newKey, value);
