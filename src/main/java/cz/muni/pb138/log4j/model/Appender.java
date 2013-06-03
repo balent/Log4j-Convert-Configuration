@@ -637,6 +637,10 @@ public class Appender {
             if (appender != null) {
                 prop.add(AppUtils.prefix(prefix + ".errorHandler.appender-ref = " + appender));
             }
+            
+            if (root) {
+                prop.add(AppUtils.prefix(prefix + ".errorHandler.root-ref = " + root));
+            }
 
             return prop;
         }
