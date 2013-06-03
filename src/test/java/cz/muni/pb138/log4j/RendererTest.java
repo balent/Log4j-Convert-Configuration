@@ -115,8 +115,6 @@ public class RendererTest {
                 AppUtils.crash("every property name must start with 'log4j': " + key);
             }
         }
-
-        configuration.verify();
         
         assertEquals(1, configuration.getRenderers().size());
         assertEquals(patternRenderer, configuration.getRenderers().get("cz.muni.fi.renderedclass"));

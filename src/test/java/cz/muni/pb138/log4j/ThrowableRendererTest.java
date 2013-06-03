@@ -124,8 +124,6 @@ public class ThrowableRendererTest {
                 AppUtils.crash("every property name must start with 'log4j': " + key);
             }
         }
-
-        configuration.verify();
         
         assertEquals(patternThrowableRenderer, configuration.getThrowableRenderer());
     }

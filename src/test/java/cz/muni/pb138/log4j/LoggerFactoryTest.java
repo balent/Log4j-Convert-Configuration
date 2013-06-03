@@ -4,10 +4,16 @@
  */
 package cz.muni.pb138.log4j;
 
+import cz.muni.pb138.log4j.model.Configuration;
 import cz.muni.pb138.log4j.model.LoggerFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -21,16 +27,16 @@ import org.junit.Test;
  * @author jozef
  */
 public class LoggerFactoryTest {
-    private LoggerFactory patternLoggerFactoryXML;    
+    private LoggerFactory patternLoggerFactory;    
     private LoggerFactory testLoggerFactory;
     private List<String> patternLoggerFactoryProp;
     
     @Before
     public void setUp() {
-        patternLoggerFactoryXML = new LoggerFactory();
-        patternLoggerFactoryXML.setClassName("com.my.log.MyLoggerFactory");
-        patternLoggerFactoryXML.addParam("messageBundle", "MyLoggerBundle");
-        patternLoggerFactoryXML.addParam("xyz", "XYZ");        
+        patternLoggerFactory = new LoggerFactory();
+        patternLoggerFactory.setClassName("com.my.log.MyLoggerFactory");
+        patternLoggerFactory.addParam("messageBundle", "MyLoggerBundle");
+        patternLoggerFactory.addParam("xyz", "XYZ");        
         
         patternLoggerFactoryProp = new ArrayList<String>();
         patternLoggerFactoryProp.add("log4j.loggerFactory = com.my.log.MyLoggerFactory");
@@ -54,13 +60,13 @@ public class LoggerFactoryTest {
         
         readedLoggerFactory.setUpFromElement(rootElement);
         
-        assertEquals(patternLoggerFactoryXML, readedLoggerFactory);
+        assertEquals(patternLoggerFactory, readedLoggerFactory);
     }
     
     @Test
     public void toPropertyTest() {
         
-        List<String> ourOutput = patternLoggerFactoryXML.toProperty(new ArrayList<String>(), "");
+        List<String> ourOutput = patternLoggerFactory.toProperty(new ArrayList<String>(), "");
         
         Collections.sort(ourOutput);
         Collections.sort(patternLoggerFactoryProp);
@@ -88,5 +94,27 @@ public class LoggerFactoryTest {
         }catch(RuntimeException ex) {
             //good
         }
+    }
+    
+    @Test
+    public void fromPropertiesToModelTest() throws FileNotFoundException, IOException{
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("unitTestFiles/patternLoggerFactory.properties"));
+
+        // now you have properties object and you can work with it.
+        Configuration configuration = new Configuration();
+
+        for (String propertyKey : properties.stringPropertyNames()) {
+            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
+            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
+                String newKey = key.substring(6); // remove initial "log4j."
+                configuration.addConfig(newKey, value);
+            } else {
+                AppUtils.crash("every property name must start with 'log4j': " + key);
+            }
+        }
+        
+        assertEquals(patternLoggerFactory, configuration.getLoggerFactory());
     }
 }

@@ -5,10 +5,16 @@
 package cz.muni.pb138.log4j;
 
 import cz.muni.pb138.log4j.model.Appender;
+import cz.muni.pb138.log4j.model.Configuration;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.dom4j.Document;
@@ -26,26 +32,26 @@ import org.junit.Test;
  * @author jozef
  */
 public class AppenderTest {
-    private Appender patternAppenderXML;
+    private Appender patternAppender;
     private Appender testAppender;
     private List<String> patternAppenderProp;
 
     @Before
     public void setUp() {
-        patternAppenderXML = new Appender();
-        patternAppenderXML.setName("fileAPPENDER");
+        patternAppender = new Appender();
+        patternAppender.setName("fileAPPENDER");
         List<String> logs = new ArrayList<String>();
         logs.add("odkazNaLoger");
-        patternAppenderXML.setErrorHandler(patternAppenderXML.createErrorHandler("org.apache.BestHandler", null, logs, "FallbackServerAppender"));
-        patternAppenderXML.setClassName("org.apache.log4j.FileAppender");
-        patternAppenderXML.setLayoutClassName("org.apache.log4j.PatternLayout");
-        patternAppenderXML.addParam("File", "/tmp/debug.log");
-        patternAppenderXML.addParam("Append", "false");
-        patternAppenderXML.addParam("Encoding", "UTF-8");
-        patternAppenderXML.addParam("BufferSize", "1024");
-        patternAppenderXML.addParam("Threshold", "WARN");
-        patternAppenderXML.addLayoutParam("ConversionPattern", "%d{HH:mm:ss}");
-        patternAppenderXML.addAppenderRef("unknownAppender");
+        patternAppender.setErrorHandler(patternAppender.createErrorHandler("org.apache.BestHandler", null, logs, "FallbackServerAppender"));
+        patternAppender.setClassName("org.apache.log4j.FileAppender");
+        patternAppender.setLayoutClassName("org.apache.log4j.PatternLayout");
+        patternAppender.addParam("File", "/tmp/debug.log");
+        patternAppender.addParam("Append", "false");
+        patternAppender.addParam("Encoding", "UTF-8");
+        patternAppender.addParam("BufferSize", "1024");
+        patternAppender.addParam("Threshold", "WARN");
+        patternAppender.addLayoutParam("ConversionPattern", "%d{HH:mm:ss}");
+        patternAppender.addAppenderRef("unknownAppender");
         
         patternAppenderProp = new ArrayList<String>();
         patternAppenderProp.add("log4j.appender.fileAPPENDER = org.apache.log4j.FileAppender");
@@ -79,13 +85,13 @@ public class AppenderTest {
         
         readedAppender.setUpFromElement(rootElement);
         
-        assertEquals(patternAppenderXML, readedAppender);
+        assertEquals(patternAppender, readedAppender);
     }
     
     @Test
     public void toPropertyTest() {
         
-        List<String> ourOutput = patternAppenderXML.toProperty(new ArrayList<String>());
+        List<String> ourOutput = patternAppender.toProperty(new ArrayList<String>());
         
         Collections.sort(ourOutput);
         Collections.sort(patternAppenderProp);
@@ -161,5 +167,27 @@ public class AppenderTest {
     
     }
     
-    
+    @Test
+    public void fromPropertiesToModelTest() throws FileNotFoundException, IOException{
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("unitTestFiles/patternAppender.properties"));
+
+        // now you have properties object and you can work with it.
+        Configuration configuration = new Configuration();
+
+        for (String propertyKey : properties.stringPropertyNames()) {
+            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
+            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
+                String newKey = key.substring(6); // remove initial "log4j."
+                configuration.addConfig(newKey, value);
+            } else {
+                AppUtils.crash("every property name must start with 'log4j': " + key);
+            }
+        }
+        
+        assertEquals(1, configuration.getAppenders().size());
+        Appender outAppender = configuration.getAppenders().get("fileAPPENDER");
+        assertEquals(patternAppender, outAppender);
+    }
 }

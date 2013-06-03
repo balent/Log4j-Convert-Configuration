@@ -4,14 +4,20 @@
  */
 package cz.muni.pb138.log4j;
 
+import cz.muni.pb138.log4j.model.Configuration;
 import static org.junit.Assert.*;
 
 import cz.muni.pb138.log4j.model.Logger;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import javax.management.ImmutableDescriptor;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -25,7 +31,7 @@ import org.junit.Test;
  * @author jozef
  */
 public class LoggerTest {
-    private Logger patternLoggerXML;
+    private Logger patternLogger;
     private Logger testLogger;
     private List<String> patternLoggerProp;
 
@@ -65,8 +71,8 @@ public class LoggerTest {
         List<String> apps = new ArrayList<String>();
         apps.add("appendJedna");
         apps.add("appendDva");
-        patternLoggerXML = CreateLogger("com.google.name",params,apps,"false","",false);
-        patternLoggerXML.setLoggerLevel(patternLoggerXML.CreateLoggerLevel("WARN", null, ""));
+        patternLogger = CreateLogger("com.google.name",params,apps,"false","",false);
+        patternLogger.setLoggerLevel(patternLogger.CreateLoggerLevel("WARN", null, ""));
         
         
         patternLoggerProp = new ArrayList<String>();
@@ -91,13 +97,13 @@ public class LoggerTest {
         
         readedLogger.setUpFromElement(rootElement);
         
-        assertEquals(patternLoggerXML, readedLogger);
+        assertEquals(patternLogger, readedLogger);
     }
     
     @Test
     public void toPropertyTest() {
         
-        List<String> ourOutput = patternLoggerXML.toProperty(new ArrayList<String>());
+        List<String> ourOutput = patternLogger.toProperty(new ArrayList<String>());
         
         Collections.sort(ourOutput);
         Collections.sort(patternLoggerProp);
@@ -153,5 +159,29 @@ public class LoggerTest {
         }catch(RuntimeException ex) {
             //good
         }
+    }
+    
+    @Test
+    public void fromPropertiesToModelTest() throws FileNotFoundException, IOException{
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("unitTestFiles/patternLogger.properties"));
+
+        // now you have properties object and you can work with it.
+        Configuration configuration = new Configuration();
+
+        for (String propertyKey : properties.stringPropertyNames()) {
+            String key = propertyKey.toLowerCase(Locale.ENGLISH);                     
+            String value = properties.getProperty(propertyKey).toLowerCase(Locale.ENGLISH);   
+            if (key.toLowerCase(Locale.ENGLISH).startsWith("log4j")) {
+                String newKey = key.substring(6); // remove initial "log4j."
+                configuration.addConfig(newKey, value);
+            } else {
+                AppUtils.crash("every property name must start with 'log4j': " + key);
+            }
+        }
+        
+        assertEquals(1, configuration.getLoggers().size());
+        Logger outLogger = configuration.getLoggers().get("com.google.name");
+        assertEquals(patternLogger, outLogger);
     }
 }
