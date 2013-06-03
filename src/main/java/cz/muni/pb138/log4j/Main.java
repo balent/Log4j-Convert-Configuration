@@ -88,22 +88,6 @@ public class Main {
             log.error("Input file doesn't exist");
             AppUtils.crash("Input file doesn't exist");
         }
-        
-        Console c = System.console();
-        if (c == null) {
-            System.err.println("Run application from command line.");
-            System.exit(1);
-        }
-        
-        while(outputFile.exists()) {
-            String rewrite = c.readLine("File " + outputFile.getName() + " already exist. Rewrite it? yes/no (yes): ");
-            if (rewrite.toLowerCase().equals("no") || rewrite.toLowerCase().equals("n")) {
-                String fileName = c.readLine("Enter output file name: ");
-                outputFile = new File(outputFile.getParent(), fileName);
-            } else {
-                break;
-            }
-        }
 
         try {
             converter.convert(inputFile, outputFile);
