@@ -33,23 +33,24 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>cz.muni.pb138.log4j.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>assemble</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <programs>
-                                <program>
-                                    <mainClass>cz.muni.pb138.log4j.Main</mainClass>
-                                    <name>log4j-convert</name>
-                                </program>
-                            </programs>
-                            <assembleDirectory>${project.build.directory}/log4j-convert</assembleDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
