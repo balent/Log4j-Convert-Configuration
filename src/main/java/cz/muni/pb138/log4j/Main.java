@@ -73,12 +73,16 @@ public class Main {
             }
             
             converter = new XmlToPropsConverter();
-        } else {
+        } else if(inputFileName.contains(".properties")){
             if (outputFileName == null) {
                 outputFileName = inputFileName.replace(".properties", ".xml");
             }
             
             converter = new PropsToXmlConverter();
+        } else {
+            System.err.println("Cannot determine input file format (no .xml or .properties suffix).");
+            System.exit(1);
+            converter = null;
         }
         
         File inputFile = new File(inputFileName);
